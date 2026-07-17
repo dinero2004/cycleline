@@ -8,6 +8,11 @@ services:
     dockerContext: .
     healthCheckPath: /api/health
     autoDeployTrigger: commit
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
+        - .dockerignore
     envVars:
       - key: APP_NAME
         value: CycleLine API
