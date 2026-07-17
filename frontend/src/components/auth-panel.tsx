@@ -93,7 +93,7 @@ export function AuthPanel() {
             Username or email
             <span className="input-wrap">
               <Mail size={17} />
-              <input name="login" autoComplete="username" placeholder="alexrider" required />
+              <input name="login" autoComplete="username" placeholder="Your username or email" required />
             </span>
           </label>
           <label>
@@ -131,9 +131,6 @@ export function AuthPanel() {
             {isLoggingIn && <LoaderCircle className="spin" size={17} />}
             Sign in to CycleLine
           </button>
-          <p className="demo-hint">
-            Demo rider: <code>alexrider</code> · <code>CycleLine!2026</code>
-          </p>
         </form>
       ) : state.ok ? (
         <div className="auth-success">
