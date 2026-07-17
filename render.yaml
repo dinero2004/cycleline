@@ -35,6 +35,8 @@ services:
         value: sync
       - key: RUN_MIGRATIONS
         value: "true"
+      - key: SEED_DATABASE
+        value: "false"
 
 databases:
   - name: cycleline-database
