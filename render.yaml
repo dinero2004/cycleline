@@ -8,7 +8,6 @@ services:
     dockerContext: .
     healthCheckPath: /api/health
     autoDeployTrigger: commit
-    preDeployCommand: php artisan migrate --force
     envVars:
       - key: APP_NAME
         value: CycleLine API
@@ -34,6 +33,8 @@ services:
         value: file
       - key: QUEUE_CONNECTION
         value: sync
+      - key: RUN_MIGRATIONS
+        value: "true"
 
 databases:
   - name: cycleline-database

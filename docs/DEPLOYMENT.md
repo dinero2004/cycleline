@@ -56,7 +56,7 @@ The repository includes `render.yaml`, which creates:
 - A Docker web service from `backend/Dockerfile`
 - A managed PostgreSQL database
 - A health check at `/api/health`
-- A pre-deploy database migration
+- A startup migration before Apache begins accepting traffic
 
 Before the first deployment, generate an application key locally:
 
