@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: cycleline-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
+        - .dockerignore
+    envVars:
+      - key: APP_NAME
+        value: CycleLine API
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: info
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: cycleline-database
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: RUN_MIGRATIONS
+        value: "true"
+      - key: SEED_DATABASE
+        value: "false"
+
+databases:
+  - name: cycleline-database
+    plan: free
+    region: frankfurt
+    databaseName: cycleline
+    user: cycleline
