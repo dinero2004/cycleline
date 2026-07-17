@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import {
-  ArrowDown,
   Bike as BikeIcon,
   Check,
   Download,
@@ -158,7 +157,6 @@ export function RoutePlanner({
               <input value={startName} onChange={(event) => setStartName(event.target.value)} placeholder="Zürich HB" />
             </span>
           </label>
-          <ArrowDown className="location-arrow" size={16} />
           <label>
             Destination
             <span className="input-wrap">

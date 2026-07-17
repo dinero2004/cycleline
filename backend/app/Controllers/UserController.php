@@ -28,7 +28,7 @@ class UserController
             'fitness_level' => ['sometimes', Rule::in(['beginner', 'intermediate', 'advanced'])],
             'weekly_distance_goal' => ['sometimes', 'integer', 'min:10', 'max:1000'],
             'preferred_distance' => ['sometimes', 'integer', 'min:5', 'max:300'],
-            'password' => ['sometimes', 'string', 'min:8', 'confirmed'],
+            'password' => ['sometimes', 'string', 'min:6', 'confirmed'],
         ]);
 
         if (isset($payload['password'])) {

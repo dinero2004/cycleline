@@ -42,7 +42,13 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         </header>
         {article.image_url && (
           <div className="article-cover">
-            <Image src={article.image_url} alt="" fill priority sizes="(max-width: 1100px) 100vw, 1100px" />
+            <Image
+              src={article.image_url}
+              alt={`${article.title} cover`}
+              fill
+              priority
+              sizes="(max-width: 1100px) 100vw, 1100px"
+            />
           </div>
         )}
         <article className="article-body">

@@ -7,14 +7,14 @@ it('registers and logs in a rider', function () {
     $this->postJson('/api/auth/register', [
         'email' => 'new@cycleline.test',
         'username' => 'newrider',
-        'password' => 'SecureRide!9',
-        'password_confirmation' => 'SecureRide!9',
+        'password' => 'ride66',
+        'password_confirmation' => 'ride66',
     ])->assertCreated()
         ->assertJsonPath('user.username', 'newrider');
 
     $this->postJson('/api/auth/login', [
         'login' => 'newrider',
-        'password' => 'SecureRide!9',
+        'password' => 'ride66',
     ])->assertOk()
         ->assertJsonStructure(['user', 'token']);
 });

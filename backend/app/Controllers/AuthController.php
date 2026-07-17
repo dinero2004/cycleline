@@ -13,7 +13,7 @@ class AuthController
         $payload = $request->validate([
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'username' => ['required', 'string', 'min:3', 'max:40', 'alpha_dash', 'unique:users,username'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         $user = User::create([

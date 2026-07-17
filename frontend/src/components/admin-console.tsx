@@ -6,7 +6,9 @@ import {
   FileText,
   KeyRound,
   LoaderCircle,
+  PencilLine,
   RefreshCcw,
+  Save,
   ShieldCheck,
   Sparkles,
   Trash2,
@@ -21,6 +23,7 @@ import {
   createNewsAction,
   deleteNewsAction,
   generateNewsDraftAction,
+  updateNewsAction,
 } from "@/app/actions";
 import type { AdminStats, AdminUser, NewsArticle } from "@/types";
 
@@ -149,8 +152,12 @@ function NewsComposer() {
           <textarea className="article-editor" value={body} onChange={(event) => setBody(event.target.value)} minLength={80} required />
         </label>
         <label>
-          Cover image URL
-          <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} type="url" placeholder="https://images.unsplash.com/…" />
+          Cover image path or URL
+          <input
+            value={imageUrl}
+            onChange={(event) => setImageUrl(event.target.value)}
+            placeholder="/images/cycling/… or https://…"
+          />
         </label>
         <div className="composer-actions">
           <label>
@@ -167,6 +174,117 @@ function NewsComposer() {
         </div>
       </div>
     </section>
+  );
+}
+
+function ArticleEditor({ article }: { article: NewsArticle }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [title, setTitle] = useState(article.title);
+  const [excerpt, setExcerpt] = useState(article.excerpt);
+  const [body, setBody] = useState(article.body);
+  const [category, setCategory] = useState(article.category);
+  const [imageUrl, setImageUrl] = useState(article.image_url ?? "");
+  const [status, setStatus] = useState<"draft" | "published">(article.status);
+
+  function save() {
+    startTransition(async () => {
+      const response = await updateNewsAction({
+        id: article.id,
+        title,
+        excerpt,
+        body,
+        category,
+        image_url: imageUrl,
+        status,
+      });
+
+      if (response.ok) {
+        toast.success(response.message);
+        setIsEditing(false);
+      } else {
+        toast.error(response.message);
+      }
+    });
+  }
+
+  if (!isEditing) {
+    return (
+      <button
+        type="button"
+        className="button button-ghost button-small"
+        onClick={() => setIsEditing(true)}
+      >
+        <PencilLine size={15} /> Edit
+      </button>
+    );
+  }
+
+  return (
+    <div className="article-edit-panel">
+      <div className="stack-form">
+        <label>
+          Title
+          <input value={title} onChange={(event) => setTitle(event.target.value)} minLength={5} />
+        </label>
+        <label>
+          Excerpt
+          <textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} minLength={20} />
+        </label>
+        <label>
+          Article
+          <textarea
+            className="article-editor"
+            value={body}
+            onChange={(event) => setBody(event.target.value)}
+            minLength={80}
+          />
+        </label>
+        <label>
+          Cover image path or URL
+          <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} />
+        </label>
+        <div className="article-edit-actions">
+          <label>
+            Category
+            <select value={category} onChange={(event) => setCategory(event.target.value)}>
+              <option>Local</option>
+              <option>Training</option>
+              <option>Gear</option>
+              <option>Safety</option>
+              <option>Community</option>
+            </select>
+          </label>
+          <label>
+            Status
+            <select
+              value={status}
+              onChange={(event) => setStatus(event.target.value as "draft" | "published")}
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </label>
+          <button
+            type="button"
+            className="button button-acid button-small"
+            onClick={save}
+            disabled={isPending || title.length < 5 || excerpt.length < 20 || body.length < 80}
+          >
+            {isPending ? <LoaderCircle className="spin" size={15} /> : <Save size={15} />}
+            Save changes
+          </button>
+          <button
+            type="button"
+            className="button button-ghost button-small"
+            onClick={() => setIsEditing(false)}
+            disabled={isPending}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -280,8 +398,8 @@ export function AdminConsole({
                     <form action={adminResetPasswordAction} className="popover-form">
                       <strong>Set temporary password</strong>
                       <input type="hidden" name="user_id" value={user.id} />
-                      <input name="password" type="password" placeholder="Minimum 10 characters" minLength={10} required />
-                      <input name="password_confirmation" type="password" placeholder="Repeat password" minLength={10} required />
+                      <input name="password" type="password" placeholder="Minimum 6 characters" minLength={6} required />
+                      <input name="password_confirmation" type="password" placeholder="Repeat password" minLength={6} required />
                       <button className="button button-dark button-small">Reset password</button>
                     </form>
                   </details>
@@ -326,16 +444,19 @@ export function AdminConsole({
                   </div>
                   <h3>{article.title}</h3>
                   <p>{article.excerpt}</p>
-                  <form action={deleteNewsAction}>
-                    <input type="hidden" name="article_id" value={article.id} />
-                    <ConfirmButton
-                      message={`Delete “${article.title}”?`}
-                      className="icon-button danger"
-                      ariaLabel={`Delete ${article.title}`}
-                    >
-                      <Trash2 size={16} />
-                    </ConfirmButton>
-                  </form>
+                  <div className="article-manager-actions">
+                    <ArticleEditor article={article} />
+                    <form action={deleteNewsAction} className="article-delete-form">
+                      <input type="hidden" name="article_id" value={article.id} />
+                      <ConfirmButton
+                        message={`Delete “${article.title}”?`}
+                        className="icon-button danger"
+                        ariaLabel={`Delete ${article.title}`}
+                      >
+                        <Trash2 size={16} />
+                      </ConfirmButton>
+                    </form>
+                  </div>
                 </article>
               ))}
             </div>

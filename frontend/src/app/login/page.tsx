@@ -20,8 +20,8 @@ export default async function LoginPage() {
     <main className="auth-page">
       <section className="auth-visual">
         <Image
-          src="/hero-images/cofeeride.png"
-          alt="Cyclists exploring a mountain road"
+          src="/images/cycling/city-community.png"
+          alt="A group of cyclists riding together in a protected city lane"
           fill
           priority
           sizes="(max-width: 900px) 0vw, 52vw"

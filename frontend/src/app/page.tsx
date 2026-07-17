@@ -34,6 +34,8 @@ const features = [
   },
 ];
 
+const cyclingBrands = ["Trek", "Specialized", "Canyon", "Giant", "Cannondale", "Brompton", "Shimano"];
+
 export default function HomePage() {
   return (
     <div className="marketing-page">
@@ -79,8 +81,8 @@ export default function HomePage() {
 
           <div className="hero-visual">
             <Image
-              src="/hero-images/cyclists.png"
-              alt="Three cyclists climbing a gravel road beside a lake"
+              src="/images/cycling/alpine-riders.png"
+              alt="Three cyclists riding above an alpine lake"
               fill
               priority
               sizes="(max-width: 900px) 100vw, 48vw"
@@ -122,6 +124,19 @@ export default function HomePage() {
           </span>
         </section>
 
+        <section className="brand-showcase" aria-labelledby="brand-showcase-title">
+          <div>
+            <span className="eyebrow">Built for every garage</span>
+            <h2 id="brand-showcase-title">Plan with the bikes riders already love.</h2>
+            <p>Popular cycling brands shown as prototype placeholders, not endorsements or partnerships.</p>
+          </div>
+          <div className="brand-cloud" aria-label="Example cycling brands">
+            {cyclingBrands.map((brand) => (
+              <span key={brand}>{brand}</span>
+            ))}
+          </div>
+        </section>
+
         <section className="feature-section" id="features">
           <div className="section-heading">
             <div>
@@ -150,12 +165,12 @@ export default function HomePage() {
         <section className="how-section" id="how-it-works">
           <div className="how-image">
             <Image
-              src="/hero-images/hero-section.png"
-              alt="A winding mountain road"
+              src="/images/cycling/gravel-forest.png"
+              alt="A gravel bicycle beside a forest route"
               fill
               sizes="(max-width: 900px) 100vw, 46vw"
             />
-            <span className="image-label">Lacets de Montvernier · France</span>
+            <span className="image-label">A quieter line through the forest</span>
           </div>
           <div className="how-copy">
             <span className="eyebrow">From idea to saved route</span>

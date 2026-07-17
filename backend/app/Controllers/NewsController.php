@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\News;
+use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -102,7 +103,16 @@ class NewsController
             'excerpt' => [$prefix, 'string', 'min:20', 'max:320'],
             'body' => [$prefix, 'string', 'min:80', 'max:20000'],
             'category' => [$prefix, 'string', 'max:40'],
-            'image_url' => ['nullable', 'url', 'max:500'],
+            'image_url' => [
+                'nullable',
+                'string',
+                'max:500',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    if (! str_starts_with($value, '/') && filter_var($value, FILTER_VALIDATE_URL) === false) {
+                        $fail('The cover image must be a site path or a valid URL.');
+                    }
+                },
+            ],
             'status' => [$prefix, Rule::in(['draft', 'published'])],
         ]);
     }

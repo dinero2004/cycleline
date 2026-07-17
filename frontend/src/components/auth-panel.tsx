@@ -170,9 +170,9 @@ export function AuthPanel() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 autoComplete="new-password"
-                placeholder="At least 8 characters"
+                placeholder="6 or more characters"
                 required
-                minLength={8}
+                minLength={6}
               />
               <button
                 type="button"
@@ -183,6 +183,8 @@ export function AuthPanel() {
                 {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
             </span>
+            <small className="field-hint">Use at least 6 characters. No symbol or number is required.</small>
+            {fieldError("password") && <small className="form-error">{fieldError("password")}</small>}
           </label>
           <label>
             Repeat password
@@ -194,9 +196,12 @@ export function AuthPanel() {
                 autoComplete="new-password"
                 placeholder="Repeat your password"
                 required
-                minLength={8}
+                minLength={6}
               />
             </span>
+            {fieldError("password_confirmation") && (
+              <small className="form-error">{fieldError("password_confirmation")}</small>
+            )}
           </label>
           <button className="button button-acid button-full" disabled={isRegistering}>
             {isRegistering && <LoaderCircle className="spin" size={17} />}

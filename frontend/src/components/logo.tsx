@@ -1,13 +1,9 @@
 import Link from "next/link";
 
-export function Logo({ compact = false }: { compact?: boolean }) {
+export function Logo() {
   return (
     <Link href="/" className="logo" aria-label="CycleLine home">
-      <span className="logo-mark" aria-hidden="true">
-        <span />
-        <span />
-      </span>
-      {!compact && <span>CycleLine</span>}
+      CycleLine
     </Link>
   );
 }

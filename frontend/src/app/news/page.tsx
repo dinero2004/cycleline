@@ -37,7 +37,7 @@ export default async function NewsPage() {
                   {article.image_url ? (
                     <Image
                       src={article.image_url}
-                      alt=""
+                      alt={`${article.title} cover`}
                       fill
                       sizes={index === 0 ? "(max-width: 900px) 100vw, 60vw" : "(max-width: 900px) 100vw, 30vw"}
                     />

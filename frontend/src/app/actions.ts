@@ -220,14 +220,16 @@ export async function generateNewsDraftAction(input: {
   }
 }
 
-export async function createNewsAction(input: {
+export interface NewsEditorInput {
   title: string;
   excerpt: string;
   body: string;
   category: string;
   image_url: string;
   status: "draft" | "published";
-}): Promise<ActionState> {
+}
+
+export async function createNewsAction(input: NewsEditorInput): Promise<ActionState> {
   try {
     const session = await tokenOrRedirect();
     await backendFetch("admin/news", {
@@ -241,6 +243,31 @@ export async function createNewsAction(input: {
     revalidatePath("/admin");
     revalidatePath("/news");
     return { ok: true, message: input.status === "published" ? "Article published." : "Draft saved." };
+  } catch (error) {
+    return actionError(error);
+  }
+}
+
+export async function updateNewsAction(
+  input: NewsEditorInput & { id: number },
+): Promise<ActionState> {
+  try {
+    const session = await tokenOrRedirect();
+    await backendFetch(`admin/news/${input.id}`, {
+      method: "PATCH",
+      token: session.accessToken,
+      body: {
+        title: input.title,
+        excerpt: input.excerpt,
+        body: input.body,
+        category: input.category,
+        image_url: input.image_url || null,
+        status: input.status,
+      },
+    });
+    revalidatePath("/admin");
+    revalidatePath("/news");
+    return { ok: true, message: "Ride Journal article updated." };
   } catch (error) {
     return actionError(error);
   }

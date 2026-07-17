@@ -77,7 +77,7 @@ class AdminController
     public function resetPassword(Request $request, User $user)
     {
         $payload = $request->validate([
-            'password' => ['required', 'string', 'min:10', 'confirmed'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
 
         $user->update(['password' => Hash::make($payload['password'])]);
