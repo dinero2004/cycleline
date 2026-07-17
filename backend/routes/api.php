@@ -8,6 +8,11 @@ use App\Controllers\RoutesController;
 use App\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health', fn () => response()->json([
+    'status' => 'ok',
+    'service' => 'cycleline-api',
+]));
+
 Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/news', [NewsController::class, 'index']);

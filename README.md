@@ -83,6 +83,16 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+### Run the production containers
+
+With Docker Desktop running:
+
+```bash
+docker compose up --build
+```
+
+This starts the standalone Next.js application, the Laravel API, and PostgreSQL. Open `http://localhost:3000`; the API health endpoint is `http://localhost:8000/api/health`.
+
 ### Demo accounts
 
 | Role | Username | Password |

@@ -34,7 +34,50 @@ const features = [
   },
 ];
 
-const cyclingBrands = ["Trek", "Specialized", "Canyon", "Giant", "Cannondale", "Brompton", "Shimano"];
+const cyclingBrands = [
+  {
+    name: "Trek",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/2018_Trek_logo_word_mark_black.svg",
+    width: 288,
+    height: 34,
+  },
+  {
+    name: "Specialized",
+    src: "https://upload.wikimedia.org/wikipedia/en/5/52/Specialized_logo.svg",
+    width: 300,
+    height: 48,
+  },
+  {
+    name: "Canyon",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/CanyonBicycles.svg",
+    width: 1024,
+    height: 144,
+  },
+  {
+    name: "Giant",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Giant_bycicles_logo_2.svg",
+    width: 550,
+    height: 105,
+  },
+  {
+    name: "Cannondale",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Cannondale_Logo.svg",
+    width: 570,
+    height: 74,
+  },
+  {
+    name: "Brompton",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Brompton_Bicycle_logo_2019.svg",
+    width: 147,
+    height: 36,
+  },
+  {
+    name: "Shimano",
+    src: "https://commons.wikimedia.org/wiki/Special:Redirect/file/Shimano_logo.svg",
+    width: 121,
+    height: 30,
+  },
+];
 
 export default function HomePage() {
   return (
@@ -130,10 +173,41 @@ export default function HomePage() {
             <h2 id="brand-showcase-title">Plan with the bikes riders already love.</h2>
             <p>Popular cycling brands shown as prototype placeholders, not endorsements or partnerships.</p>
           </div>
-          <div className="brand-cloud" aria-label="Example cycling brands">
-            {cyclingBrands.map((brand) => (
-              <span key={brand}>{brand}</span>
-            ))}
+          <div
+            className="brand-marquee"
+            aria-label="Popular cycling brand logos. Focus or hover to pause the animation."
+            tabIndex={0}
+          >
+            <div className="brand-track">
+              {["primary", "duplicate"].map((group) => {
+                const isDuplicate = group === "duplicate";
+
+                return (
+                  <div
+                    className="brand-track-group"
+                    aria-hidden={isDuplicate ? "true" : undefined}
+                    key={group}
+                  >
+                    {cyclingBrands.map((brand) => (
+                      <span className="brand-logo-card" key={`${group}-${brand.name}`}>
+                        <Image
+                          className="brand-logo-image"
+                          src={brand.src}
+                          alt={isDuplicate ? "" : `${brand.name} logo`}
+                          width={brand.width}
+                          height={brand.height}
+                          sizes="220px"
+                          unoptimized
+                        />
+                      </span>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+            <span className="brand-marquee-hint" aria-hidden="true">
+              Hover to pause
+            </span>
           </div>
         </section>
 

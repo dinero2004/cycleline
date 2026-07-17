@@ -1,0 +1,64 @@
+name: cycleline
+
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: cycleline
+      POSTGRES_USER: cycleline
+      POSTGRES_PASSWORD: cycleline-development
+    volumes:
+      - cycleline-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cycleline -d cycleline"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      APP_NAME: CycleLine API
+      APP_ENV: production
+      APP_KEY: base64:Y3ljbGVsaW5lLWRvY2tlci1kZXZlbG9wbWVudC1rZXk=
+      APP_DEBUG: "false"
+      APP_URL: http://localhost:8000
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: info
+      DB_CONNECTION: pgsql
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_DATABASE: cycleline
+      DB_USERNAME: cycleline
+      DB_PASSWORD: cycleline-development
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
+      RUN_MIGRATIONS: "true"
+      SEED_DATABASE: "true"
+      PORT: 8080
+    depends_on:
+      database:
+        condition: service_healthy
+    ports:
+      - "8000:8080"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      AUTH_SECRET: cycleline-container-development-secret-change-in-production
+      BACKEND_URL: http://backend:8080/api
+      HOSTNAME: 0.0.0.0
+      PORT: 3000
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+
+volumes:
+  cycleline-postgres:
