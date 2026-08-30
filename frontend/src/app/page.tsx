@@ -3,8 +3,10 @@ import Link from "next/link";
 import {
   ArrowRight,
   Bike,
+  BookmarkCheck,
   Check,
   ChevronRight,
+  Download,
   Gauge,
   MapPinned,
   Route,
@@ -31,6 +33,18 @@ const features = [
     icon: Bike,
     title: "Choose the right bike",
     text: "Keep your road, gravel, city, touring, mountain, or electric bike in one garage and attach the right one to every route.",
+  },
+  {
+    number: "04",
+    icon: BookmarkCheck,
+    title: "Keep every good route",
+    text: "Save the lines you want to ride, revisit the details, and build a personal route library instead of starting over each time.",
+  },
+  {
+    number: "05",
+    icon: Download,
+    title: "Take it to your bike",
+    text: "Export GPX-ready route geometry for your preferred cycling computer or navigation app when it is time to ride.",
   },
 ];
 
@@ -87,10 +101,6 @@ export default function HomePage() {
       <main>
         <section className="hero">
           <div className="hero-copy">
-            <div className="eyebrow-row">
-              <span className="live-dot" />
-              Personal route intelligence
-            </div>
             <h1>
               Find your line.
               <span>Ride it your way.</span>
@@ -101,11 +111,11 @@ export default function HomePage() {
             </p>
             <div className="hero-actions">
               <Link href="/login" className="button button-acid">
-                Build your first route
+                Create an account
                 <ArrowRight size={18} />
               </Link>
               <Link href="#how-it-works" className="text-link">
-                See how it works
+                Explore the product
                 <ChevronRight size={17} />
               </Link>
             </div>

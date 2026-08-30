@@ -95,27 +95,6 @@ img {
   text-transform: uppercase;
 }
 
-.eyebrow-row {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  color: var(--ink-soft);
-  font-family: "Geist Mono", monospace;
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--coral);
-  box-shadow: 0 0 0 5px rgba(255, 107, 69, 0.13);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
 .logo {
   display: inline-flex;
   align-items: center;
@@ -341,6 +320,10 @@ img {
   font-weight: 760;
   letter-spacing: -0.085em;
   line-height: 0.88;
+}
+
+.hero-copy > h1:first-child {
+  margin-top: 0;
 }
 
 .hero h1 span {
@@ -734,10 +717,11 @@ img {
   display: grid;
   margin-top: 64px;
   gap: 16px;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(6, 1fr);
 }
 
 .feature-card {
+  grid-column: span 2;
   min-height: 330px;
   padding: 28px;
   border: 1px solid var(--line);
@@ -747,6 +731,11 @@ img {
     transform 220ms ease,
     background 220ms ease,
     border-color 220ms ease;
+}
+
+.feature-card:nth-child(n + 4) {
+  min-height: 290px;
+  grid-column: span 3;
 }
 
 .feature-card:hover {
@@ -780,6 +769,14 @@ img {
 
 .feature-card:nth-child(3) > div > svg {
   background: var(--blue);
+}
+
+.feature-card:nth-child(4) > div > svg {
+  background: var(--sage);
+}
+
+.feature-card:nth-child(5) > div > svg {
+  background: #f3c9b5;
 }
 
 .feature-card h3 {
@@ -3027,16 +3024,6 @@ select:focus {
   }
 }
 
-@keyframes pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 5px rgba(255, 107, 69, 0.13);
-  }
-  50% {
-    box-shadow: 0 0 0 9px rgba(255, 107, 69, 0.02);
-  }
-}
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -3141,8 +3128,10 @@ select:focus {
     grid-template-columns: 1fr;
   }
 
-  .feature-card {
+  .feature-card,
+  .feature-card:nth-child(n + 4) {
     min-height: 260px;
+    grid-column: auto;
   }
 
   .feature-card h3 {
@@ -3341,6 +3330,15 @@ select:focus {
   .hero-actions {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .hero-copy {
+    padding-top: 54px;
+  }
+
+  .hero h1 {
+    font-size: clamp(3.15rem, 16vw, 5.3rem);
+    line-height: 0.92;
   }
 
   .hero-visual {

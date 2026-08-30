@@ -15,7 +15,7 @@ export async function PublicHeader() {
         <Link href="/#features">Features</Link>
       </nav>
       <Link className="button button-dark button-small" href={session ? "/dashboard" : "/login"}>
-        {session ? "Open dashboard" : "Start riding"}
+        {session ? "Open dashboard" : "Log in"}
         <ArrowUpRight size={16} />
       </Link>
     </header>
