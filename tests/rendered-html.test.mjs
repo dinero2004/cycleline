@@ -4,44 +4,24 @@ import test from "node:test";
 
 const projectRoot = new URL("../", import.meta.url);
 
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
+test("production build renders the CycleLine route planner", async () => {
+  const html = await readFile(
+    new URL("../.next/server/app/index.html", import.meta.url),
+    "utf8",
   );
-}
 
-test("server-renders the CycleLine route planner", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
   assert.match(html, /<title>CycleLine — Better routes for every ride<\/title>/i);
   assert.match(html, /Choose your line\./);
   assert.match(html, /Find my line/);
   assert.match(html, /Pick your line/);
   assert.match(html, /Great conditions/);
   assert.match(html, /After-work loop/);
+  assert.match(html, /og:image/);
   assert.doesNotMatch(html, /Personal route intelligence/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
 
-test("removes the disposable starter preview", async () => {
+test("keeps the production surface clean and interactive", async () => {
   const [page, layout, packageJson] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
@@ -51,8 +31,11 @@ test("removes the disposable starter preview", async () => {
   assert.match(page, /^"use client";/);
   assert.match(page, /aria-label="Route preference"/);
   assert.match(page, /localStorage\.setItem\("cycleline-saved-route"/);
+  assert.match(layout, /VERCEL_PROJECT_PRODUCTION_URL/);
   assert.match(layout, /title: "CycleLine/);
   assert.match(packageJson, /"name": "cycleline"/);
+  assert.match(packageJson, /"build": "next build"/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
+  await access(new URL(".next/BUILD_ID", projectRoot));
   await assert.rejects(access(new URL("app/_sites-preview", projectRoot)));
 });

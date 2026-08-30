@@ -7,7 +7,14 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
 });
 
+const siteOrigin = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteOrigin),
   title: "CycleLine — Better routes for every ride",
   description: "Plan safer, faster and more comfortable cycling routes with clear comparisons and live ride context.",
   openGraph: {
