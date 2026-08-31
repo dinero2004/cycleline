@@ -1,16 +1,16 @@
 import { Bike, CheckCircle2, Plus, Trash2 } from "lucide-react";
-import { auth } from "@/auth";
 import { addBikeAction, deleteBikeAction, updateProfileAction } from "@/app/actions";
 import { backendFetch } from "@/lib/backend";
+import { requireSession } from "@/lib/session";
 import type { UserProfile } from "@/types";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Profile and bikes" };
 
 export default async function ProfilePage() {
-  const session = await auth();
+  const session = await requireSession();
   const response = await backendFetch<{ user: UserProfile }>("me", {
-    token: session!.accessToken,
+    token: session.accessToken,
   });
   const user = response.user;
 

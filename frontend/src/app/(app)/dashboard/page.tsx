@@ -10,16 +10,16 @@ import {
   Sparkles,
   Timer,
 } from "lucide-react";
-import { auth } from "@/auth";
 import { backendFetch } from "@/lib/backend";
+import { requireSession } from "@/lib/session";
 import { RoutePreview } from "@/components/route-preview";
 import type { NewsArticle, RouteSuggestion, SavedRoute, UserProfile } from "@/types";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
-  const session = await auth();
-  const token = session!.accessToken;
+  const session = await requireSession();
+  const token = session.accessToken;
 
   const [profileResponse, routesResponse, suggestionsResponse, newsResponse] = await Promise.all([
     backendFetch<{ user: UserProfile }>("me", { token }).catch(() => null),
@@ -48,7 +48,7 @@ export default async function DashboardPage() {
             <CalendarDays size={14} />
             Your ride desk
           </span>
-          <h1>Good to see you, {session?.user.username}.</h1>
+          <h1>Good to see you, {session.user.username}.</h1>
           <p>Your next good ride is already taking shape.</p>
         </div>
         <Link href="/planner" className="button button-dark">

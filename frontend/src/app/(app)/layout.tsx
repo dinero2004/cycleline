@@ -1,13 +1,8 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 import { AppSidebar } from "@/components/app-sidebar";
+import { requireSession } from "@/lib/session";
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await requireSession();
 
   return (
     <div className="app-shell">

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
-import { auth } from "@/auth";
 import { backendFetch } from "@/lib/backend";
+import { requireSession } from "@/lib/session";
 import { AdminConsole } from "@/components/admin-console";
 import type { AdminStats, AdminUser, NewsArticle } from "@/types";
 
@@ -9,8 +9,8 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Admin" };
 
 export default async function AdminPage() {
-  const session = await auth();
-  if (!session?.user.isAdmin) {
+  const session = await requireSession();
+  if (!session.user.isAdmin) {
     redirect("/dashboard");
   }
 

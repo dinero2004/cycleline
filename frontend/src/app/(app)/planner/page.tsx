@@ -1,5 +1,5 @@
-import { auth } from "@/auth";
 import { backendFetch } from "@/lib/backend";
+import { requireSession } from "@/lib/session";
 import { RoutePlanner } from "@/components/route-planner";
 import type { UserProfile } from "@/types";
 
@@ -11,10 +11,10 @@ export default async function PlannerPage({
 }: {
   searchParams: Promise<{ start?: string; end?: string }>;
 }) {
-  const session = await auth();
+  const session = await requireSession();
   const params = await searchParams;
   const response = await backendFetch<{ user: UserProfile }>("me", {
-    token: session!.accessToken,
+    token: session.accessToken,
   }).catch(() => null);
 
   return (
@@ -28,7 +28,7 @@ export default async function PlannerPage({
       </header>
       <RoutePlanner
         bikes={response?.user.bikes ?? []}
-        fitnessLevel={response?.user.fitness_level ?? session!.user.fitnessLevel}
+        fitnessLevel={response?.user.fitness_level ?? session.user.fitnessLevel}
         initialStart={params.start}
         initialEnd={params.end}
       />

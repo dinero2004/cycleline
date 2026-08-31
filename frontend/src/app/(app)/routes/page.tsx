@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Bike, Heart, Map, Mountain, Route, Timer, Trash2 } from "lucide-react";
-import { auth } from "@/auth";
 import { deleteRouteAction, toggleFavoriteRouteAction } from "@/app/actions";
 import { backendFetch } from "@/lib/backend";
+import { requireSession } from "@/lib/session";
 import { DownloadGpxButton } from "@/components/download-gpx-button";
 import { RoutePreview } from "@/components/route-preview";
 import type { SavedRoute } from "@/types";
@@ -11,9 +11,9 @@ export const dynamic = "force-dynamic";
 export const metadata = { title: "Saved routes" };
 
 export default async function RoutesPage() {
-  const session = await auth();
+  const session = await requireSession();
   const response = await backendFetch<{ routes: SavedRoute[] }>("routes", {
-    token: session!.accessToken,
+    token: session.accessToken,
   }).catch(() => ({ routes: [] }));
 
   return (
