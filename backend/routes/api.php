@@ -13,8 +13,8 @@ Route::get('/health', fn () => response()->json([
     'service' => 'cycleline-api',
 ]));
 
-Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/login', [AuthController::class, 'login']);
+Route::post('/auth/register', [AuthController::class, 'register'])->middleware('throttle:auth');
+Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:auth');
 Route::get('/news', [NewsController::class, 'index']);
 Route::get('/news/{news:slug}', [NewsController::class, 'show']);
 
