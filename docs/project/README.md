@@ -30,6 +30,7 @@ flowchart LR
 | [data-model.md](data-model.md) | Tables, relations, cascade rules |
 | [configuration.md](configuration.md) | Env vars per service and where they're set |
 | [deployment-vm.md](deployment-vm.md) | Run API + Postgres on a VM behind Tailscale Funnel, frontend on Vercel |
+| [deployment-k8s.md](deployment-k8s.md) | Run API + Postgres on k3s behind Cloudflare Tunnel, frontend on Vercel |
 | [../API.md](../API.md) | Existing endpoint reference |
 | [../DEPLOYMENT.md](../DEPLOYMENT.md) | Existing deployment guide (Vercel, Render, compose) |
 | [../ARCHITECTURE.md](../ARCHITECTURE.md) | Existing architecture notes (ER diagram, guarantees) |
