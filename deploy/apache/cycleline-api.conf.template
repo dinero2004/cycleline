@@ -1,0 +1,13 @@
+# Rendered by scripts/k8s-deploy.sh into /etc/apache2/sites-available/cycleline-api.conf.
+# Cloudflare Tunnel sends https://__API_HOSTNAME__ to 127.0.0.1:8081; Apache picks this
+# vhost by Host header and forwards to the backend Service's ClusterIP.
+<VirtualHost 127.0.0.1:8081>
+    ServerName __API_HOSTNAME__
+    ProxyRequests Off
+    ProxyPreserveHost On
+    RequestHeader set X-Forwarded-Proto "https"
+    ProxyPass / http://__CLUSTER_IP__:8080/
+    ProxyPassReverse / http://__CLUSTER_IP__:8080/
+    ErrorLog ${APACHE_LOG_DIR}/cycleline-api-error.log
+    CustomLog ${APACHE_LOG_DIR}/cycleline-api-access.log combined
+</VirtualHost>

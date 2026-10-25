@@ -1,0 +1,27 @@
+# Non-secret API settings. Secrets (APP_KEY, APP_URL, POSTGRES_PASSWORD) live in
+# the cycleline-private Secret, created by scripts/k8s-deploy.sh from .env.vm.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cycleline-config
+  namespace: cycleline
+data:
+  APP_NAME: CycleLine API
+  APP_ENV: production
+  APP_DEBUG: "false"
+  LOG_CHANNEL: stderr
+  LOG_LEVEL: info
+  DB_CONNECTION: pgsql
+  DB_HOST: postgres
+  DB_PORT: "5432"
+  DB_DATABASE: cycleline
+  DB_USERNAME: cycleline
+  POSTGRES_DB: cycleline
+  POSTGRES_USER: cycleline
+  SESSION_DRIVER: file
+  CACHE_STORE: file
+  QUEUE_CONNECTION: sync
+  RUN_MIGRATIONS: "true"
+  # Never true in a public environment: it restores the public demo passwords.
+  SEED_DATABASE: "false"
+  PORT: "8080"
