@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (Pint + Pest)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # Same PHP as backend/Dockerfile.
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: intl, mbstring, pdo_sqlite, pdo_pgsql, zip
+          coverage: none
+      - uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache/files
+          key: composer-${{ hashFiles('backend/composer.lock') }}
+          restore-keys: composer-
+      - run: composer install --no-interaction --no-progress --prefer-dist
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      - run: vendor/bin/pint --test
+      # Plain `php artisan test` fails: phpunit.xml lists a missing tests/Unit suite.
+      - run: php artisan test --testsuite=Feature
+
+  frontend:
+    name: Frontend (lint + typecheck + build)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # Same Node as frontend/Dockerfile.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+
+  images:
+    name: Docker images build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      # Build only, no push: production images are built on the k3s node by scripts/k8s-deploy.sh.
+      - run: docker build -f backend/Dockerfile -t cycleline-backend:ci .
+      - run: docker build -f frontend/Dockerfile -t cycleline-frontend:ci .
