@@ -1,0 +1,13 @@
+# Rendered by scripts/k8s-deploy.sh into /etc/apache2/sites-available/cycleline-web.conf.
+# Cloudflare Tunnel sends https://__WEB_HOSTNAME__ to 127.0.0.1:8081; Apache picks this
+# vhost by Host header and forwards to the frontend Service's ClusterIP.
+<VirtualHost 127.0.0.1:8081>
+    ServerName __WEB_HOSTNAME__
+    ProxyRequests Off
+    ProxyPreserveHost On
+    RequestHeader set X-Forwarded-Proto "https"
+    ProxyPass / http://__CLUSTER_IP__:3000/
+    ProxyPassReverse / http://__CLUSTER_IP__:3000/
+    ErrorLog ${APACHE_LOG_DIR}/cycleline-web-error.log
+    CustomLog ${APACHE_LOG_DIR}/cycleline-web-access.log combined
+</VirtualHost>

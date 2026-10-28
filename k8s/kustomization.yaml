@@ -5,3 +5,4 @@ resources:
   - 10-configmap.yaml
   - 20-postgres.yaml
   - 30-backend.yaml
+  - 40-frontend.yaml
