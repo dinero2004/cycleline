@@ -3,6 +3,7 @@ import { ArrowUpRight, Gauge } from "lucide-react";
 import { AppNav } from "@/components/app-nav";
 import { Logo } from "@/components/logo";
 import { LogoutButton } from "@/components/logout-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { FitnessLevel } from "@/types";
 
 export function AppSidebar({
@@ -18,7 +19,7 @@ export function AppSidebar({
     <aside className="app-sidebar">
       <div className="sidebar-top">
         <Logo />
-        <span className="version-pill">v2.0</span>
+        <ThemeToggle />
       </div>
 
       <AppNav isAdmin={isAdmin} />

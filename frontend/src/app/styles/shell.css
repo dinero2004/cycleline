@@ -1,0 +1,226 @@
+/* Layout shell: public nav, footer, skip link, app top bar on phones. */
+
+.skip-link {
+  position: absolute;
+  z-index: 2000;
+  top: 8px;
+  left: 8px;
+  padding: 10px 14px;
+  background: var(--orange);
+  color: var(--on-orange);
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transform: translateY(-160%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* Public nav */
+.public-header {
+  position: sticky;
+  z-index: 40;
+  top: 0;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--glass);
+  backdrop-filter: blur(14px);
+  padding-top: env(safe-area-inset-top);
+}
+
+.public-header-inner {
+  display: flex;
+  width: min(1240px, calc(100% - 32px));
+  min-height: var(--nav-height);
+  align-items: center;
+  margin: 0 auto;
+  gap: 28px;
+}
+
+.public-nav {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+  gap: 4px;
+}
+
+.public-nav a,
+.nav-login {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 12px;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: color 160ms ease;
+}
+
+.public-nav a:hover,
+.nav-login:hover {
+  color: var(--text);
+}
+
+.public-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.public-header .button-small {
+  min-height: 44px;
+}
+
+.mobile-menu {
+  display: none;
+}
+
+@media (max-width: 759px) {
+  .public-nav,
+  .public-header-actions {
+    display: none;
+  }
+
+  .public-header-inner {
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .mobile-menu {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mobile-menu-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: flex;
+    padding: 12px 16px 20px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mobile-menu-panel[hidden] {
+    display: none;
+  }
+
+  .mobile-menu-panel a:not(.button) {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    border-bottom: 1px solid var(--line-soft);
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .mobile-menu-panel .button {
+    margin-top: 14px;
+  }
+}
+
+/* Footer */
+.public-footer {
+  border-top: 1px solid var(--line);
+  background: var(--ink);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.public-footer-inner {
+  display: grid;
+  width: min(1240px, calc(100% - 32px));
+  align-items: center;
+  margin: 0 auto;
+  padding: 40px 0;
+  gap: 28px;
+  grid-template-columns: 1fr auto auto;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-brand p,
+.footer-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+}
+
+.footer-links a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  color: var(--text-2);
+  font-family: var(--font-display);
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.footer-links a:hover {
+  color: var(--text);
+}
+
+@media (max-width: 759px) {
+  .public-footer-inner {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* App top bar on phones (the sidebar becomes a bottom tab bar there) */
+.mobile-brand {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .mobile-brand {
+    position: sticky;
+    z-index: 30;
+    top: 0;
+    display: flex;
+    min-height: 56px;
+    align-items: center;
+    padding: env(safe-area-inset-top) 16px 0;
+    border-bottom: 1px solid var(--line-soft);
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    gap: 12px;
+  }
+
+  .mobile-brand-logo {
+    display: inline-flex;
+    align-items: center;
+    margin-right: auto;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .mobile-brand-user {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+}
