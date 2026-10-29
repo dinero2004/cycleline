@@ -163,6 +163,7 @@ AI_EVAL_TOKEN=… npm run eval:assistant   # assistant evals against the running
 - [Deployment guide](docs/DEPLOYMENT.md)
 - [Web API: routing, elevation, export, assistant](docs/web-api.md)
 - [Routing provider ADR](docs/routing-adr.md)
+- [Next sprint](docs/NEXT-SPRINT.md)
 - [Route assistant system prompt](frontend/prompts/route-assistant.md)
 
 ## Map-service note
