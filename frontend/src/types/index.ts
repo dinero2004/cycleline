@@ -45,6 +45,7 @@ export interface SavedRoute {
   route_type: "one-way" | "round-trip";
   profile: BikeType;
   coordinates: [number, number][];
+  details?: RouteDetails | null;
   is_favorite: boolean;
   created_at: string;
 }
@@ -87,9 +88,17 @@ export interface AdminStats {
   published_articles: number;
 }
 
-export interface PlannerResult {
-  coordinates: [number, number][];
-  distanceKm: number;
-  durationMinutes: number;
-  elevationGainM: number;
+
+/** Route Studio data stored with a saved route (nullable for routes saved earlier). */
+export interface RouteDetails {
+  ride_profile?: "road" | "gravel" | "mtb" | "ebike" | "commuter";
+  provider?: string;
+  waypoints?: [number, number][];
+  elevation?: { d: number; e: number }[];
+  surface_mix?: { paved: number; gravel: number; trail: number; unknown: number };
+  inferred_surface_m?: number;
+  descent_m?: number;
+  max_grade_pct?: number;
+  avg_grade_pct?: number;
+  warnings?: string[];
 }

@@ -8,7 +8,7 @@ import { ascentDescent, fnv1a, haversineM } from "@/lib/routing/metrics";
 import { elevationRequest } from "@/lib/routing/schema";
 import type { ElevationPoint } from "@/lib/routing/types";
 
-const cache = new TtlCache<{ profile: ElevationPoint[]; ascentM: number; descentM: number }>(300, 24 * 60 * 60 * 1000);
+const cache = new TtlCache<{ profile: ElevationPoint[]; coordinates: [number, number, number][]; ascentM: number; descentM: number }>(300, 24 * 60 * 60 * 1000);
 const MAX_SAMPLES = 200;
 const SPACING_M = 50;
 
@@ -33,7 +33,12 @@ export async function POST(request: Request) {
       if (i) d += haversineM(points[i - 1], p);
       return { d: Math.round(d), e: Math.round(elevations[i] * 10) / 10 };
     });
-    const result = { profile, ...ascentDescent(elevations) };
+    // coordinates: the sampled line as [lng, lat, ele], so a hand-drawn route gets heights too.
+    const result = {
+      profile,
+      coordinates: points.map(([lat, lng], i) => [lng, lat, elevations[i]] as [number, number, number]),
+      ...ascentDescent(elevations),
+    };
     cache.set(key, result);
     return NextResponse.json(result);
   } catch (error) {

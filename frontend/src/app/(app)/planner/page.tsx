@@ -1,36 +1,33 @@
 import { backendFetch } from "@/lib/backend";
+import { fitnessFor, rideProfileForBike } from "@/lib/api";
 import { requireSession } from "@/lib/session";
-import { RoutePlanner } from "@/components/route-planner";
+import { MemberStudio } from "@/components/studio/member-studio";
 import type { UserProfile } from "@/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Route planner" };
+export const metadata = { title: "Route studio" };
 
 export default async function PlannerPage({
   searchParams,
 }: {
-  searchParams: Promise<{ start?: string; end?: string }>;
+  searchParams: Promise<{ start?: string; end?: string; w?: string; p?: string; n?: string }>;
 }) {
   const session = await requireSession();
   const params = await searchParams;
   const response = await backendFetch<{ user: UserProfile }>("me", {
     token: session.accessToken,
   }).catch(() => null);
+  const bikes = response?.user.bikes ?? [];
+  const bike = bikes.find((b) => b.is_default) ?? bikes[0];
 
   return (
-    <div className="app-page planner-page">
-      <header className="app-page-header">
-        <div>
-          <span className="eyebrow">Route studio</span>
-          <h1>Build a line worth riding.</h1>
-          <p>Choose two places, the bike, and the kind of surface you want under your tyres.</p>
-        </div>
-      </header>
-      <RoutePlanner
-        bikes={response?.user.bikes ?? []}
-        fitnessLevel={response?.user.fitness_level ?? session.user.fitnessLevel}
-        initialStart={params.start}
-        initialEnd={params.end}
+    <div className="studio-page">
+      <h1 className="visually-hidden">Route studio: build a line worth riding</h1>
+      <MemberStudio
+        fitness={fitnessFor(response?.user.fitness_level ?? session.user.fitnessLevel)}
+        profile={bike ? rideProfileForBike(bike.type) : "road"}
+        bikeId={bike?.id ?? null}
+        params={params}
       />
     </div>
   );

@@ -132,6 +132,23 @@ class RoutesController
             'coordinates.*.0' => ['numeric', 'between:-90,90'],
             'coordinates.*.1' => ['numeric', 'between:-180,180'],
             'is_favorite' => ['sometimes', 'boolean'],
+            'details' => ['sometimes', 'nullable', 'array:ride_profile,provider,waypoints,elevation,surface_mix,inferred_surface_m,descent_m,max_grade_pct,avg_grade_pct,warnings'],
+            'details.ride_profile' => ['sometimes', Rule::in(['road', 'gravel', 'mtb', 'ebike', 'commuter'])],
+            'details.provider' => ['sometimes', 'string', 'max:30'],
+            'details.waypoints' => ['sometimes', 'array', 'max:25'],
+            'details.waypoints.*' => ['array', 'size:2'],
+            'details.waypoints.*.*' => ['numeric', 'between:-180,180'],
+            'details.elevation' => ['sometimes', 'array', 'max:400'],
+            'details.elevation.*.d' => ['required_with:details.elevation', 'numeric', 'min:0'],
+            'details.elevation.*.e' => ['required_with:details.elevation', 'numeric', 'between:-500,9000'],
+            'details.surface_mix' => ['sometimes', 'array:paved,gravel,trail,unknown'],
+            'details.surface_mix.*' => ['numeric', 'min:0'],
+            'details.inferred_surface_m' => ['sometimes', 'numeric', 'min:0'],
+            'details.descent_m' => ['sometimes', 'integer', 'min:0', 'max:30000'],
+            'details.max_grade_pct' => ['sometimes', 'numeric', 'between:-100,100'],
+            'details.avg_grade_pct' => ['sometimes', 'numeric', 'between:-100,100'],
+            'details.warnings' => ['sometimes', 'array', 'max:40'],
+            'details.warnings.*' => ['string', 'max:160'],
         ]);
     }
 

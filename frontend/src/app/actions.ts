@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { BackendError, backendFetch } from "@/lib/backend";
-import type { BikeType, FitnessLevel, NewsArticle, PlannerResult } from "@/types";
+import { toBackendRoute, type StudioSaveInput } from "@/lib/studio";
+import type { NewsArticle } from "@/types";
 
 export interface ActionState {
   ok: boolean;
@@ -89,47 +90,21 @@ export async function deleteBikeAction(formData: FormData) {
   revalidatePath("/planner");
 }
 
-export interface SaveRouteInput extends PlannerResult {
-  name: string;
-  description: string;
-  startName: string;
-  endName: string;
-  start: [number, number];
-  end: [number, number];
-  difficulty: FitnessLevel;
-  routeType: "one-way" | "round-trip";
-  profile: BikeType;
-  bikeId: number | null;
-}
-
-export async function saveRouteAction(input: SaveRouteInput): Promise<ActionState> {
+/** Saves (or updates, with routeId) a Route Studio route including its details. */
+export async function saveStudioRouteAction(
+  input: StudioSaveInput & { routeId?: number | null },
+): Promise<ActionState & { routeId?: number }> {
   try {
     const session = await tokenOrRedirect();
-    await backendFetch("routes", {
-      method: "POST",
+    const body = toBackendRoute(input);
+    const response = await backendFetch<{ route: { id: number } }>(input.routeId ? `routes/${input.routeId}` : "routes", {
+      method: input.routeId ? "PATCH" : "POST",
       token: session.accessToken,
-      body: {
-        bike_id: input.bikeId,
-        name: input.name,
-        description: input.description,
-        start_name: input.startName,
-        end_name: input.endName,
-        start_lat: input.start[0],
-        start_lng: input.start[1],
-        end_lat: input.end[0],
-        end_lng: input.end[1],
-        distance_km: input.distanceKm,
-        duration_minutes: input.durationMinutes,
-        elevation_gain_m: input.elevationGainM,
-        difficulty: input.difficulty,
-        route_type: input.routeType,
-        profile: input.profile,
-        coordinates: input.coordinates,
-      },
+      body,
     });
     revalidatePath("/routes");
     revalidatePath("/dashboard");
-    return { ok: true, message: "Route saved to your library." };
+    return { ok: true, message: input.routeId ? "Route updated." : "Route saved to your library.", routeId: response.route.id };
   } catch (error) {
     return actionError(error);
   }

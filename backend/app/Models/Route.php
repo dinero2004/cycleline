@@ -27,11 +27,13 @@ class Route extends Model
         'route_type',
         'profile',
         'coordinates',
+        'details',
         'is_favorite',
     ];
 
     protected $casts = [
         'coordinates' => 'array',
+        'details' => 'array',
         'distance_km' => 'decimal:2',
         'start_lat' => 'float',
         'start_lng' => 'float',

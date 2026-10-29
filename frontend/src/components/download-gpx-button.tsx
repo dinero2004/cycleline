@@ -1,18 +1,24 @@
 "use client";
 
 import { Download } from "lucide-react";
+import { buildGpx, gpxFileName } from "@/lib/routing/gpx";
 import type { SavedRoute } from "@/types";
 
-export function DownloadGpxButton({ route }: { route: Pick<SavedRoute, "name" | "coordinates"> }) {
+export function DownloadGpxButton({ route }: { route: Pick<SavedRoute, "name" | "coordinates" | "details"> }) {
   function download() {
-    const points = route.coordinates
-      .map(([lat, lng]) => `<trkpt lat="${lat}" lon="${lng}"></trkpt>`)
-      .join("");
-    const gpx = `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="CycleLine"><trk><name>${route.name}</name><trkseg>${points}</trkseg></trk></gpx>`;
+    const waypoints = route.details?.waypoints ?? [];
+    const gpx = buildGpx({
+      name: route.name,
+      coordinates: route.coordinates,
+      waypoints: waypoints.map((point, i) => ({
+        point,
+        name: i === 0 ? "Start" : i === waypoints.length - 1 ? "Finish" : `Waypoint ${i + 1}`,
+      })),
+    });
     const url = URL.createObjectURL(new Blob([gpx], { type: "application/gpx+xml" }));
     const anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = `${route.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.gpx`;
+    anchor.download = gpxFileName(route.name);
     anchor.click();
     URL.revokeObjectURL(url);
   }

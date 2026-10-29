@@ -1,10 +1,13 @@
 import Link from "next/link";
-import { Bike, Heart, Map, Mountain, Route, Timer, Trash2 } from "lucide-react";
+import { Bike, Heart, Map, Mountain, PenLine, Route, Timer, Trash2 } from "lucide-react";
 import { deleteRouteAction, toggleFavoriteRouteAction } from "@/app/actions";
 import { backendFetch } from "@/lib/backend";
 import { requireSession } from "@/lib/session";
 import { DownloadGpxButton } from "@/components/download-gpx-button";
 import { RoutePreview } from "@/components/route-preview";
+import { SurfaceBar } from "@/components/viz/surface-bar";
+import { rideProfileForBike } from "@/lib/api";
+import { encodeShare } from "@/lib/studio";
 import type { SavedRoute } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -61,8 +64,22 @@ export default async function RoutesPage() {
                     <Bike size={15} /> {route.bike?.name ?? "No bike"}
                   </span>
                 </div>
+                {route.details?.surface_mix && (
+                  <SurfaceBar mix={route.details.surface_mix} inferredM={route.details.inferred_surface_m ?? 0} compact />
+                )}
               </div>
               <div className="route-card-actions">
+                <Link
+                  className="icon-button"
+                  href={`/planner?${encodeShare(
+                    (route.details?.waypoints ?? [[route.start_lat, route.start_lng], [route.end_lat, route.end_lng]]).map((point, i) => ({ id: String(i), point })),
+                    route.details?.ride_profile ?? rideProfileForBike(route.profile),
+                    route.name,
+                  )}`}
+                  aria-label={`Open ${route.name} in Route Studio`}
+                >
+                  <PenLine size={17} />
+                </Link>
                 <DownloadGpxButton route={route} />
                 <form action={toggleFavoriteRouteAction}>
                   <input type="hidden" name="route_id" value={route.id} />
