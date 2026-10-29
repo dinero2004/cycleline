@@ -1,16 +1,18 @@
-import type { Metadata } from "next";
-import { Geist_Mono, Manrope } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Barlow_Condensed, Inter } from "next/font/google";
 import { Toaster } from "sonner";
 import { Providers } from "@/providers";
+import { THEME_SCRIPT } from "@/lib/theme";
 import "./globals.css";
 
-const manrope = Manrope({
-  variable: "--font-manrope",
+const barlow = Barlow_Condensed({
+  variable: "--font-barlow",
   subsets: ["latin"],
+  weight: ["600", "700", "800"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -22,16 +24,31 @@ export const metadata: Metadata = {
   description: "A personal cycling route planner for better rides, bikes, and weekly goals.",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0b0c0c" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f3ee" },
+  ],
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
-      className={`${manrope.variable} ${geistMono.variable}`}
+      className={`${barlow.variable} ${inter.variable}`}
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
+      <head>
+        {/* Sets data-theme before first paint so there is no flash of the wrong theme. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body suppressHydrationWarning>
         <Providers>{children}</Providers>
-        <Toaster position="bottom-right" richColors closeButton />
+        <Toaster position="bottom-right" closeButton />
       </body>
     </html>
   );
