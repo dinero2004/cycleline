@@ -20,6 +20,13 @@ This repository is a full rebuild of the original Create React App prototype.
 - Admin user/role management, password reset, ride-data reset, and deletion
 - Admin news draft generation, draft saving, publishing, and deletion
 - Responsive UI, keyboard-visible controls, reduced-motion support, and mobile navigation
+- Dark and light themes (persisted, default follows the system)
+- Route Studio: draw on the map, snap to road, waypoints, alternatives, loops, surface mix,
+  linked elevation chart, warnings, GPX with elevation and waypoints
+- Provider-agnostic routing (BRouter → GraphHopper → Valhalla) with caching, rate limits and typed errors
+- AI route assistant (Claude or a Llama model via an OpenAI-compatible server) that plans only through tools
+- Guest demo at `/demo`: no account, drafts on the device, imported into a new account on sign-up
+- Offline basics (service worker, last route kept on the device)
 
 ## Stack
 
@@ -120,6 +127,17 @@ Change or remove seeded credentials before using a public environment.
 └── docs/                    Architecture and API reference
 ```
 
+### AI route assistant (optional)
+
+The assistant runs with Claude (`AI_PROVIDER=anthropic`, `ANTHROPIC_API_KEY`) or any
+OpenAI-compatible server. Locally, the default is Ollama:
+
+```bash
+ollama pull llama3.1      # small model: fine for development, see docs/web-api.md for quality notes
+```
+
+All settings are listed in `frontend/.env.example`.
+
 ## Quality checks
 
 ```bash
@@ -132,7 +150,10 @@ vendor/bin/pint --test
 cd frontend
 npm run typecheck
 npm run lint
+npm test                 # unit + API contract tests (Vitest)
 npm run build
+npm run e2e              # guest demo on phone viewports (Playwright; starts a dev server on :3300)
+AI_EVAL_TOKEN=… npm run eval:assistant   # assistant evals against the running app and configured model
 ```
 
 ## Documentation
@@ -140,6 +161,9 @@ npm run build
 - [Architecture](docs/ARCHITECTURE.md)
 - [API reference](docs/API.md)
 - [Deployment guide](docs/DEPLOYMENT.md)
+- [Web API: routing, elevation, export, assistant](docs/web-api.md)
+- [Routing provider ADR](docs/routing-adr.md)
+- [Route assistant system prompt](frontend/prompts/route-assistant.md)
 
 ## Map-service note
 
