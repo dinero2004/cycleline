@@ -10,6 +10,7 @@ export default defineConfig({
   },
   test: {
     include: ["tests/**/*.test.ts"],
+    silent: "passed-only",
     environment: "node",
   },
 });

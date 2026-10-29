@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { saveStudioRouteAction } from "@/app/actions";
@@ -7,6 +8,9 @@ import type { Fitness, LatLng, RideProfile } from "@/lib/routing/types";
 import { decodeShare, waypointId, type StudioDraft, type Waypoint } from "@/lib/studio";
 import { RouteStudio } from "./route-studio";
 import type { Studio } from "./use-studio";
+
+// The chat is only downloaded when Route Studio renders it.
+const AssistantPanel = dynamic(() => import("./assistant-panel").then((m) => m.AssistantPanel), { ssr: false });
 
 const DRAFT_KEY = "cycleline-member-draft";
 
@@ -23,13 +27,11 @@ export function MemberStudio({
   profile,
   bikeId,
   params,
-  assistant,
 }: {
   fitness: Fitness;
   profile: RideProfile;
   bikeId: number | null;
   params: { start?: string; end?: string; w?: string; p?: string; n?: string };
-  assistant?: (studio: Studio) => React.ReactNode;
 }) {
   const [init, setInit] = useState<{ waypoints: Waypoint[]; profile: RideProfile; name: string } | null>(null);
   const routeId = useRef<number | null>(null);
@@ -130,7 +132,7 @@ export function MemberStudio({
       init={{ ...init, fitness }}
       saveRoute={save}
       onDraftChange={saveDraft}
-      assistant={assistant}
+      assistant={(studio, { inline }) => <AssistantPanel studio={studio} mode="member" inline={inline} />}
     />
   );
 }

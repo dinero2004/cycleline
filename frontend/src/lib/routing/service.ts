@@ -115,8 +115,12 @@ export class RoutingService {
         }),
       ),
     );
-    const routes = settled.flatMap((s) => (s.status === "fulfilled" ? [s.value] : []));
-    if (routes.length === 0) throw new RoutingError("no_route", "No round trip could be found from this start point.");
+    const all = settled.flatMap((s) => (s.status === "fulfilled" ? [s.value] : []));
+    if (all.length === 0) throw new RoutingError("no_route", "No round trip could be found from this start point.");
+    // Drop loops that came out far from the target when closer ones exist.
+    const target = request.distanceKm * 1000;
+    const close = all.filter((r) => Math.abs(r.distanceM / target - 1) <= 0.35);
+    const routes = close.length ? close : all;
     return rankRoutes(dedupeRoutes(routes), {
       fitness: request.fitness,
       preferences: request.preferences,

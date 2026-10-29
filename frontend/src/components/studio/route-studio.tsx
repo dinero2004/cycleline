@@ -324,7 +324,7 @@ export function RouteStudio({
   /** Guests: called at natural conversion moments instead of the member action. */
   onGate?: (reason: GateReason) => void;
   onDraftChange?: (draft: StudioDraft) => void;
-  assistant?: (studio: Studio) => ReactNode;
+  assistant?: (studio: Studio, options: { inline: boolean }) => ReactNode;
   banner?: ReactNode;
 }) {
   const studio = useStudio(init);
@@ -502,7 +502,7 @@ export function RouteStudio({
       {route && <Warnings route={route} />}
       <Preferences studio={studio} showFitness={mode === "guest"} />
       {isPhone && <ElevationPanel studio={studio} compact />}
-      {isPhone && assistant?.(studio)}
+      {isPhone && assistant?.(studio, { inline: true })}
     </>
   );
 
@@ -518,13 +518,13 @@ export function RouteStudio({
           {status}
         </span>
         <div className="studio-topbar-actions">
-          <button type="button" className="button button-secondary button-small" onClick={() => void share()} data-tour="share">
+          <button type="button" className="button button-secondary button-small" onClick={() => void share()} data-tour="share" aria-label="Share">
             <Share2 size={15} /> <span className="hide-sm">Share</span>
           </button>
-          <button type="button" className="button button-secondary button-small" onClick={() => void save()} disabled={saving} data-tour="save">
+          <button type="button" className="button button-secondary button-small" onClick={() => void save()} disabled={saving} data-tour="save" aria-label="Save">
             {saving ? <LoaderCircle size={15} className="spin" /> : <Save size={15} />} <span className="hide-sm">Save</span>
           </button>
-          <button type="button" className="button button-primary button-small" onClick={() => void exportGpx()} data-tour="export">
+          <button type="button" className="button button-primary button-small" onClick={() => void exportGpx()} data-tour="export" aria-label="Export GPX">
             <Download size={15} /> <span className="hide-sm">Export</span> GPX
           </button>
         </div>
@@ -568,10 +568,10 @@ export function RouteStudio({
           />
 
           <div className="studio-toolbar" role="toolbar" aria-label="Map tools" data-tour="toolbar">
-            <button type="button" className={`tool${draw ? " active" : ""}`} aria-pressed={draw} onClick={() => setDraw(!draw)} title="Draw: click the map to add waypoints">
+            <button type="button" className={`tool${draw ? " active" : ""}`} aria-pressed={draw} onClick={() => setDraw(!draw)} title="Draw: click the map to add waypoints" aria-label="Draw">
               <PenLine size={18} /> <span>Draw</span>
             </button>
-            <button type="button" className={`tool${studio.snap ? " active" : ""}`} aria-pressed={studio.snap} onClick={() => studio.setSnap(!studio.snap)} title="Snap the line to roads and paths">
+            <button type="button" className={`tool${studio.snap ? " active" : ""}`} aria-pressed={studio.snap} onClick={() => studio.setSnap(!studio.snap)} title="Snap the line to roads and paths" aria-label="Snap to road">
               <Magnet size={18} /> <span>Snap</span>
             </button>
             <button
@@ -581,20 +581,20 @@ export function RouteStudio({
                 if (isPhone) setSheet("full");
                 setTimeout(() => searchBox.current?.querySelector("input")?.focus(), 50);
               }}
-              title="Add a waypoint by searching for a place"
+              title="Add a waypoint by searching for a place" aria-label="Add a waypoint"
             >
               <MapPin size={18} /> <span>Waypoint</span>
             </button>
-            <button type="button" className={`tool${layer === "topo" ? " active" : ""}`} aria-pressed={layer === "topo"} onClick={() => setLayer(layer === "map" ? "topo" : "map")} title="Switch between the map and a topographic layer">
+            <button type="button" className={`tool${layer === "topo" ? " active" : ""}`} aria-pressed={layer === "topo"} onClick={() => setLayer(layer === "map" ? "topo" : "map")} title="Switch between the map and a topographic layer" aria-label="Map layers">
               <Layers size={18} /> <span>{layer === "topo" ? "Topo" : "Layers"}</span>
             </button>
-            <button type="button" className="tool" onClick={studio.undo} disabled={!studio.canUndo} title="Undo (Ctrl+Z)">
+            <button type="button" className="tool" onClick={studio.undo} disabled={!studio.canUndo} title="Undo (Ctrl+Z)" aria-label="Undo">
               <Undo2 size={18} /> <span>Undo</span>
             </button>
-            <button type="button" className="tool hide-sm" onClick={() => void save()} title="Save">
+            <button type="button" className="tool hide-sm" onClick={() => void save()} title="Save" aria-label="Save route">
               <Save size={18} /> <span>Save</span>
             </button>
-            <button type="button" className="tool hide-sm" onClick={() => void exportGpx()} title="Export GPX">
+            <button type="button" className="tool hide-sm" onClick={() => void exportGpx()} title="Export GPX" aria-label="Export GPX file">
               <Download size={18} /> <span>Export</span>
             </button>
           </div>
@@ -613,7 +613,7 @@ export function RouteStudio({
           </div>
 
           {!isPhone && <ElevationPanel studio={studio} />}
-          {!isPhone && assistant?.(studio)}
+          {!isPhone && assistant?.(studio, { inline: false })}
         </div>
       </div>
 
