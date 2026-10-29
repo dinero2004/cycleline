@@ -14,7 +14,7 @@ const coord = (n: number) => n.toFixed(6);
 export interface GpxInput {
   name: string;
   description?: string;
-  coordinates: Position[] | LatLng[];
+  coordinates: (Position | LatLng)[];
   waypoints?: { point: LatLng; name: string }[];
   /** Adds a note to the track description, used for limited guest exports. */
   watermark?: string;

@@ -15,6 +15,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { saveRouteAction } from "@/app/actions";
+import { fitnessFor } from "@/lib/api";
+import { estimateDurationS } from "@/lib/routing/metrics";
+import type { Route as PlannedRoute } from "@/lib/routing/types";
 import type { Bike, BikeType, FitnessLevel, PlannerResult } from "@/types";
 
 const PlannerMap = dynamic(() => import("@/components/planner-map"), {
@@ -56,9 +59,9 @@ export function RoutePlanner({
 
   async function geocode(query: string): Promise<PlaceResult> {
     const response = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`);
-    const data = (await response.json()) as PlaceResult & { message?: string };
+    const data = (await response.json()) as PlaceResult & { error?: { message: string } };
     if (!response.ok) {
-      throw new Error(data.message ?? "Location not found.");
+      throw new Error(data.error?.message ?? "Location not found.");
     }
     return data;
   }
@@ -84,12 +87,18 @@ export function RoutePlanner({
           routeType,
         }),
       });
-      const route = (await response.json()) as PlannerResult & { message?: string };
-      if (!response.ok) {
-        throw new Error(route.message ?? "No route could be calculated.");
+      const data = (await response.json()) as { route?: PlannedRoute; error?: { message: string } };
+      if (!response.ok || !data.route) {
+        throw new Error(data.error?.message ?? "No route could be calculated.");
       }
+      const route = data.route;
       setPlaces({ start, end });
-      setResult(route);
+      setResult({
+        coordinates: route.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
+        distanceKm: Math.round(route.distanceM / 100) / 10,
+        durationMinutes: Math.max(1, Math.round(estimateDurationS(route, fitnessFor(fitnessLevel)) / 60)),
+        elevationGainM: route.ascentM,
+      });
       setRouteName(`${startName.split(",")[0]} to ${endName.split(",")[0]}`);
       toast.success("Your line is ready.");
     } catch (error) {
