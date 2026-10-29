@@ -64,6 +64,9 @@ export default function HomePage() {
                   Explore sample routes
                 </Link>
               </div>
+              <Link href="/demo" className="demo-link">
+                Try the demo, no account needed <ArrowRight size={15} aria-hidden="true" />
+              </Link>
               <dl className="hero-proof">
                 <div>
                   <dt>Ride profiles</dt>

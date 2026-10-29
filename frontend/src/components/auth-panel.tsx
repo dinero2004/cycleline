@@ -5,13 +5,14 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, Eye, EyeOff, LoaderCircle, LockKeyhole, Mail, UserRound } from "lucide-react";
 import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
-import { registerAction, type ActionState } from "@/app/actions";
+import { importGuestDraftsAction, registerAction, type ActionState } from "@/app/actions";
+import { importableDrafts, removeDrafts } from "@/lib/guest-drafts";
 
 const initialState: ActionState = { ok: false, message: "" };
 
-export function AuthPanel() {
+export function AuthPanel({ initialMode = "login" }: { initialMode?: "login" | "register" }) {
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const [mode, setMode] = useState<"login" | "register">(initialMode);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState("");
@@ -43,8 +44,19 @@ export function AuthPanel() {
       return;
     }
 
+    // Guest demo drafts on this device move into the account; failed ones stay in the demo.
+    const drafts = importableDrafts();
+    if (drafts.length) {
+      const result = await importGuestDraftsAction(
+        drafts.map((d) => ({ id: d.id, name: d.name, profile: d.profile, preferences: d.preferences ?? {}, waypoints: d.waypoints })),
+      );
+      removeDrafts(result.imported);
+      if (result.ok) toast.success(result.message);
+      else toast.error(result.message);
+    }
+
     const session = await getSession();
-    router.push(session?.user?.isAdmin ? "/admin" : "/dashboard");
+    router.push(session?.user?.isAdmin ? "/admin" : drafts.length ? "/routes" : "/dashboard");
     router.refresh();
   }
 

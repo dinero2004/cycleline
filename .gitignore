@@ -26,3 +26,6 @@
 
 # local production builds next to the dev server
 /frontend/.next-build/
+/frontend/evals/last-run.json
+/frontend/test-results/
+/frontend/playwright-report/

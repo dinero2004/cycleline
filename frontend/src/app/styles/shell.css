@@ -224,3 +224,49 @@
     font-size: 0.8rem;
   }
 }
+
+.nav-demo {
+  color: var(--lime-text);
+}
+
+/* Guest demo page: slim header, studio fills the rest. */
+.demo-page {
+  display: flex;
+  height: 100dvh;
+  flex-direction: column;
+  background: var(--ink);
+}
+
+.demo-header {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  padding: env(safe-area-inset-top) 12px 0 16px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  gap: 14px;
+}
+
+.demo-header .eyebrow {
+  margin-right: auto;
+}
+
+.demo-header .logo {
+  font-size: 1.25rem;
+}
+
+.demo-main {
+  min-height: 0;
+  flex: 1;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (max-width: 480px) {
+  .demo-header .eyebrow {
+    display: none;
+  }
+
+  .demo-header .logo {
+    margin-right: auto;
+  }
+}

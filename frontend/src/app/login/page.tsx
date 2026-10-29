@@ -10,8 +10,9 @@ export const metadata = {
   title: "Sign in",
 };
 
-export default async function LoginPage() {
+export default async function LoginPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const session = await auth();
+  const { mode } = await searchParams;
   if (session) {
     redirect("/dashboard");
   }
@@ -50,7 +51,7 @@ export default async function LoginPage() {
         <Link href="/" className="back-link">
           <ArrowLeft size={16} /> Back to CycleLine
         </Link>
-        <AuthPanel />
+        <AuthPanel initialMode={mode === "register" ? "register" : "login"} />
         <p className="auth-legal">By continuing, you agree to keep the rubber side down.</p>
       </section>
     </main>

@@ -66,7 +66,7 @@ export function BottomSheet({
   return (
     <div
       ref={sheet}
-      className={`bottom-sheet sheet-${snap}${dragHeight !== null ? " is-dragging" : ""}`}
+      className={`bottom-sheet snap-${snap}${dragHeight !== null ? " is-dragging" : ""}`}
       style={height ? { height } : undefined}
       role="region"
       aria-label={label}

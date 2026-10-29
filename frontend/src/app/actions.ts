@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { BackendError, backendFetch } from "@/lib/backend";
+import { z } from "zod";
+import { fitnessFor } from "@/lib/api";
+import { latLng, preferences, rideProfile } from "@/lib/routing/schema";
+import { routingService } from "@/lib/routing/service";
 import { toBackendRoute, type StudioSaveInput } from "@/lib/studio";
 import type { NewsArticle } from "@/types";
 
@@ -108,6 +112,69 @@ export async function saveStudioRouteAction(
   } catch (error) {
     return actionError(error);
   }
+}
+
+const guestDrafts = z
+  .array(
+    z.object({
+      id: z.string().max(40),
+      name: z.string().max(120).default(""),
+      profile: rideProfile,
+      preferences,
+      waypoints: z.array(z.object({ point: latLng, label: z.string().max(200).optional() })).min(2).max(25),
+    }),
+  )
+  .max(10);
+
+/**
+ * Imports guest demo drafts into the signed-in account. Each draft's plan is routed again on the
+ * server (nothing computed in the browser is trusted). Returns the ids that were saved so the
+ * browser deletes only those; drafts that fail stay on the device.
+ */
+export async function importGuestDraftsAction(input: unknown): Promise<ActionState & { imported: string[] }> {
+  const session = await tokenOrRedirect();
+  const parsed = guestDrafts.safeParse(input);
+  if (!parsed.success) return { ok: false, message: "Those drafts could not be read.", imported: [] };
+  const fitness = fitnessFor(session.user.fitnessLevel);
+  const imported: string[] = [];
+  for (const draft of parsed.data) {
+    try {
+      const route = await routingService().route({
+        waypoints: draft.waypoints.map((w) => w.point),
+        profile: draft.profile,
+        preferences: draft.preferences,
+        fitness,
+      });
+      const first = draft.waypoints[0];
+      const last = draft.waypoints[draft.waypoints.length - 1];
+      const label = (w: { point: [number, number]; label?: string }) => w.label ?? `${w.point[0].toFixed(4)}, ${w.point[1].toFixed(4)}`;
+      await backendFetch("routes", {
+        method: "POST",
+        token: session.accessToken,
+        body: toBackendRoute({
+          name: draft.name.trim().length >= 3 ? draft.name.trim() : `Demo route ${imported.length + 1}`,
+          startName: label(first),
+          endName: label(last),
+          bikeId: null,
+          route,
+          fitness,
+        }),
+      });
+      imported.push(draft.id);
+    } catch {
+      // Left on the device; the rider can open it in the demo again.
+    }
+  }
+  revalidatePath("/routes");
+  revalidatePath("/dashboard");
+  const left = parsed.data.length - imported.length;
+  return {
+    ok: imported.length > 0,
+    message: imported.length
+      ? `${imported.length} demo route${imported.length === 1 ? "" : "s"} moved to your library.${left ? ` ${left} couldn't be routed and stay in the demo.` : ""}`
+      : "Your demo drafts couldn't be imported right now; they're still in the demo.",
+    imported,
+  };
 }
 
 export async function deleteRouteAction(formData: FormData) {

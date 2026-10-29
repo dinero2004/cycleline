@@ -657,3 +657,22 @@
     transform: none;
   }
 }
+
+.demo-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  margin-top: 10px;
+  color: var(--lime-text);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  gap: 6px;
+}
+
+.demo-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

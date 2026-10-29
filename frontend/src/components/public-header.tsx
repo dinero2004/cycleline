@@ -30,6 +30,11 @@ export async function PublicHeader() {
         </nav>
         <div className="public-header-actions">
           <ThemeToggle />
+          {!session && (
+            <Link className="nav-login nav-demo" href="/demo">
+              Try the demo
+            </Link>
+          )}
           <Link className="nav-login" href={account.href}>
             {account.label}
           </Link>
@@ -38,7 +43,7 @@ export async function PublicHeader() {
             <ArrowUpRight size={16} />
           </Link>
         </div>
-        <MobileMenu links={[...links, account]} />
+        <MobileMenu links={[...links, ...(session ? [] : [{ href: "/demo", label: "Try the demo — no account" }]), account]} />
       </div>
     </header>
   );
