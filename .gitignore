@@ -23,3 +23,6 @@
 .idea/
 .vscode/
 *.log
+
+# local production builds next to the dev server
+/frontend/.next-build/
