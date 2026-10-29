@@ -18,7 +18,7 @@ Prereqs: `npm ci` in `frontend/`, `composer install` in `backend/`, `backend/.en
 1. All per-item gate commands, both halves.
 2. `npm run build` in `frontend/` (timeout 600s) — `README.md:135`.
 
-`docker compose build` is not in the gate (docker not installed locally). No CI exists in the repo (no `.github/workflows`), so CI parity is not checked.
+`docker compose build` is not in the gate (docker not installed locally). CI (`.github/workflows/ci.yml`) runs both halves of the per-item gate, the final-gate build and both Docker image builds on every PR.
 
 ## Warnings
 - No frontend test runner is configured (`frontend/package.json` has no `test` script); frontend gates are typecheck + lint only.
