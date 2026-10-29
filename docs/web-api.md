@@ -163,3 +163,34 @@ All limits can be changed with environment variables:
 | AI: model steps / tool calls per answer / output tokens | 6 / 8 / 8000 (Claude), 2000 (OpenAI-compatible) | `AI_MAX_STEPS`, `AI_MAX_TOOL_CALLS`, `AI_MAX_OUTPUT_TOKENS` |
 
 Rate limits and caches are kept in memory per server process. Behind more than one replica, move them to Redis (see [routing-adr.md](routing-adr.md)).
+
+## Assistant model quality (evals)
+
+`frontend/evals/route-assistant.cases.json` holds 18 cases:
+- loops and A-to-B routes
+- a missing start point
+- follow-ups (less climbing, avoid the main road, coffee stop, water, steepest parts)
+- weather
+- saving as a guest
+- off-topic requests
+- prompt injection
+- requests for coordinates
+- a route that's too long
+
+Every case is also checked for coordinates that no tool returned. Run them with `npm run eval:assistant` against a running app (see `evals/run.ts`).
+
+Results on 2026-10-29:
+
+| Model | Passed | Invented coordinates |
+|---|---|---|
+| Llama 3.1 8B (Ollama, local) | 9 / 18 | none |
+| Claude Opus 5.5 | not run: no API key on the development machine | — |
+
+The 8B Llama often skips a tool, calls the wrong one, or asks the rider for something it should look up itself. The server compensates where it can:
+- tools run in order, so places are found before routing
+- predictable place ids
+- place names accepted in place of ids, but only names the rider actually wrote
+- numbers sent as text are converted
+- tool calls written as JSON text are run
+
+For production, use Claude (`AI_PROVIDER=anthropic`) or a larger Llama (70B), and re-run the evals.
