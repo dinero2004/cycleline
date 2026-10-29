@@ -270,3 +270,21 @@
     margin-right: auto;
   }
 }
+
+.offline-banner {
+  position: fixed;
+  z-index: 2500;
+  right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  left: 12px;
+  display: flex;
+  max-width: 560px;
+  align-items: flex-start;
+  margin: 0 auto;
+  padding: 10px 14px;
+  border: 1px solid var(--orange);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85rem;
+  gap: 8px;
+}

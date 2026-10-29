@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Inter } from "next/font/google";
 import { Toaster } from "sonner";
+import { OfflineStatus } from "@/components/offline-status";
 import { Providers } from "@/providers";
 import { THEME_SCRIPT } from "@/lib/theme";
 import "./globals.css";
@@ -48,6 +49,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body suppressHydrationWarning>
         <Providers>{children}</Providers>
+        <OfflineStatus />
         <Toaster position="bottom-right" closeButton />
       </body>
     </html>

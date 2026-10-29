@@ -18,6 +18,10 @@ export default async function DemoPage({ searchParams }: { searchParams: Promise
 
   return (
     <div className="demo-page">
+      {/* Map tiles are the largest paint here: open the connections early. */}
+      <link rel="preconnect" href="https://a.tile.openstreetmap.org"/>
+      <link rel="preconnect" href="https://b.tile.openstreetmap.org"/>
+      <link rel="preconnect" href="https://c.tile.openstreetmap.org"/>
       <header className="demo-header">
         <Link href="/" className="logo" aria-label="CycleLine home">
           <LogoMark />

@@ -5,6 +5,7 @@ import { useEffect, useMemo } from "react";
 import { CircleMarker, MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import { useTheme } from "@/components/theme-toggle";
 import { distanceAtPoint, pointAtDistance } from "@/lib/routing/metrics";
+import { simplifyLine } from "@/lib/routing/simplify";
 import type { LatLng, Route } from "@/lib/routing/types";
 import type { Waypoint } from "@/lib/studio";
 
@@ -98,7 +99,11 @@ export default function StudioMap({
 }) {
   const theme = useTheme();
   const tiles = layer === "topo" ? TILES.topo : TILES[theme];
-  const line = useMemo<LatLng[]>(() => route?.geometry.coordinates.map(([lng, lat]) => [lat, lng]) ?? [], [route]);
+  // Long routes are thinned (3 m tolerance) before drawing; metrics still come from the full line.
+  const line = useMemo<LatLng[]>(() => {
+    const coordinates = route?.geometry.coordinates ?? [];
+    return (coordinates.length > 1500 ? simplifyLine(coordinates, 3) : coordinates).map(([lng, lat]) => [lat, lng]);
+  }, [route]);
   const points = waypoints.map((w) => w.point);
   const active = route && activeD !== null ? pointAtDistance(route, activeD) : null;
   const center: LatLng = points[0] ?? [47.3769, 8.5417];
