@@ -15,6 +15,8 @@ export function PublicFooter() {
           <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">
             Map data
           </a>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/imprint">Imprint</Link>
         </nav>
         <p className="footer-copy">© {new Date().getFullYear()} CycleLine</p>
       </div>
