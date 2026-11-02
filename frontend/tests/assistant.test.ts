@@ -26,7 +26,7 @@ vi.mock("@/lib/routing/service", () => ({
   routingService: () => ({ alternatives: async () => ranked, loop: async () => ranked }),
 }));
 
-const { runAssistant, getConversation, hideIds } = await import("@/lib/ai/assistant");
+const { runAssistant, getConversation, hideIds, providerChoice } = await import("@/lib/ai/assistant");
 const { runTool } = await import("@/lib/ai/tools");
 const { inventedCoordinates, redactCoordinates, rememberNumbers, cleanName } = await import("@/lib/ai/guard");
 const { issueChallenge, verifySolution, leadingZeroBits } = await import("@/lib/ai/pow");
@@ -248,5 +248,23 @@ describe("eval grading", () => {
   it("allows coordinates that a tool returned", () => {
     const res = grade({ id: "x", turns: ["a"], expect: {} }, [trace({ text: "47.3769", sourcedNumbers: ["47.37690"] })]);
     expect(res.pass).toBe(true);
+  });
+});
+
+describe("assistant provider choice", () => {
+  it("uses Claude when a key is set, or when asked for", () => {
+    expect(providerChoice({ ANTHROPIC_API_KEY: "k", NODE_ENV: "production" })).toBe("anthropic");
+    expect(providerChoice({ AI_PROVIDER: "anthropic", NODE_ENV: "development" })).toBe("anthropic");
+  });
+
+  it("uses a Llama server only when its address is configured in production", () => {
+    expect(providerChoice({ AI_OPENAI_BASE_URL: "https://llama.example/v1", NODE_ENV: "production" })).toBe("openai");
+    expect(providerChoice({ AI_PROVIDER: "openai", AI_OPENAI_BASE_URL: "https://llama.example/v1", NODE_ENV: "production" })).toBe("openai");
+  });
+
+  it("falls back to a local Ollama only in development", () => {
+    expect(providerChoice({ NODE_ENV: "development" })).toBe("openai");
+    expect(providerChoice({ NODE_ENV: "production" })).toBeNull();
+    expect(providerChoice({ AI_PROVIDER: "openai", NODE_ENV: "production" })).toBeNull();
   });
 });

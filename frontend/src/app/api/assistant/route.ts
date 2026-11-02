@@ -56,6 +56,12 @@ export async function POST(request: Request) {
     if (!minute.ok) return rateLimited(Math.ceil((minute.resetAt - Date.now()) / 1000));
 
     const provider = assistantProvider();
+    if (!provider) {
+      console.error(
+        JSON.stringify({ at: "assistant", error: "not configured: set ANTHROPIC_API_KEY, or AI_PROVIDER=openai with AI_OPENAI_BASE_URL" }),
+      );
+      throw new RoutingError("provider_unavailable", "The route assistant isn't set up on this server yet. You can still plan by hand.", 503);
+    }
     const conversation = getConversation(
       input.conversationId,
       owner,

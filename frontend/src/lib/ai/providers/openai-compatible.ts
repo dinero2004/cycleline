@@ -58,7 +58,8 @@ export function createOpenAICompatibleProvider({
             body: JSON.stringify({ model, messages, tools, stream: true, max_tokens: maxTokens, temperature: 0.2 }),
           });
           if (!response.ok || !response.body) {
-            throw new Error(`Model server answered ${response.status}.`);
+            // 404 from Ollama usually means the model isn't pulled: `ollama pull <AI_OPENAI_MODEL>`.
+            throw new Error(`Model server at ${new URL(baseUrl).host} answered ${response.status} for model "${model}".`);
           }
 
           let text = "";

@@ -22,11 +22,25 @@ export function routeAssistantPrompt(): string {
   return systemPrompt;
 }
 
+type AiEnv = Partial<Record<"AI_PROVIDER" | "ANTHROPIC_API_KEY" | "AI_OPENAI_BASE_URL" | "NODE_ENV", string>>;
+
+/**
+ * AI_PROVIDER=anthropic | openai (any OpenAI-compatible server, e.g. Ollama with Llama).
+ * Without settings the Llama provider points at a local Ollama, which only exists on a developer's
+ * machine; in production that would fail on every message, so the assistant counts as not set up.
+ */
+export function providerChoice(env: AiEnv): "anthropic" | "openai" | null {
+  const choice = env.AI_PROVIDER ?? (env.ANTHROPIC_API_KEY ? "anthropic" : "openai");
+  if (choice === "anthropic") return "anthropic";
+  return env.AI_OPENAI_BASE_URL || env.NODE_ENV !== "production" ? "openai" : null;
+}
+
 let provider: AssistantProvider | null = null;
-/** AI_PROVIDER=anthropic | openai (any OpenAI-compatible server, e.g. Ollama with Llama). */
-export function assistantProvider(): AssistantProvider {
+/** The configured provider, or null when the server has no AI settings. */
+export function assistantProvider(): AssistantProvider | null {
   if (!provider) {
-    const choice = process.env.AI_PROVIDER ?? (process.env.ANTHROPIC_API_KEY ? "anthropic" : "openai");
+    const choice = providerChoice(process.env);
+    if (!choice) return null;
     provider = choice === "anthropic" ? createAnthropicProvider() : createOpenAICompatibleProvider();
   }
   return provider;
