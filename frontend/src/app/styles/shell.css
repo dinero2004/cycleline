@@ -8,7 +8,7 @@
   padding: 8px 12px;
   background: var(--orange);
   color: var(--on-orange);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
   transform: translateY(-160%);
@@ -52,7 +52,7 @@
   align-items: center;
   padding: 0 12px;
   color: var(--muted);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-base);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
@@ -116,7 +116,7 @@
     min-height: 48px;
     align-items: center;
     border-bottom: 1px solid var(--line-soft);
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: var(--text-lg);
     font-weight: var(--weight-semibold);
     letter-spacing: 0;
@@ -168,7 +168,7 @@
   min-height: 44px;
   align-items: center;
   color: var(--text-2);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-md);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;

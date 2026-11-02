@@ -95,3 +95,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+.legal-section p + p {
+  margin-top: var(--space-3);
+}

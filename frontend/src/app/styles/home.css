@@ -113,7 +113,7 @@
 
 .mockup-bar strong {
   margin-left: auto;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-base);
   letter-spacing: 0;
 }
@@ -151,7 +151,7 @@
 
 .mockup-metrics dt {
   color: var(--muted);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
@@ -320,7 +320,7 @@
 
 .metric-row dt {
   color: var(--muted);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
@@ -365,7 +365,7 @@
 .device-list li {
   padding: 8px 12px;
   border: 1px solid var(--line);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-base);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
@@ -400,7 +400,7 @@
 .badge {
   position: absolute;
   padding: 4px 8px;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-md);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
@@ -428,7 +428,7 @@
 
 .route-card-body h4 {
   margin: 0;
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-lg);
   font-weight: var(--weight-semibold);
   line-height: 1;
@@ -496,14 +496,14 @@
 
 .how-copy li > span {
   color: var(--orange-text);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-2xl);
   font-weight: var(--weight-semibold);
   line-height: 1;
 }
 
 .how-copy li strong {
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-lg);
   font-weight: var(--weight-semibold);
 }
@@ -657,7 +657,7 @@
   align-items: center;
   margin-top: 8px;
   color: var(--lime-text);
-  font-family: var(--font-display);
+  font-family: var(--font-body);
   font-size: var(--text-base);
   font-weight: var(--weight-semibold);
   letter-spacing: 0;
