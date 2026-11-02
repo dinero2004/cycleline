@@ -1,0 +1,195 @@
+/*
+ * Design tokens. Every colour, size, radius, shadow and duration in the app comes from here.
+ * data-theme on <html> is set before paint (see layout.tsx); without it the system theme wins.
+ * Style guide: docs/STYLE-GUIDE.md.
+ */
+
+:root {
+  /* Type */
+  --font-display: var(--font-barlow), "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --text-xs: 12px;
+  --leading-xs: 16px;
+  --text-sm: 13px;
+  --leading-sm: 18px;
+  --text-md: 14px;
+  --leading-md: 20px;
+  --text-base: 16px;
+  --leading-base: 24px;
+  --text-lg: 20px;
+  --leading-lg: 28px;
+  --text-xl: 28px;
+  --leading-xl: 32px;
+  --text-2xl: 40px;
+  --leading-2xl: 44px;
+  --text-3xl: 56px;
+  --leading-3xl: 56px;
+
+  /* Spacing: 4px grid */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-control: 8px;
+  --radius-card: 12px;
+  --radius-pill: 999px;
+
+  /* Sizes */
+  --control-height: 48px;
+  --control-height-small: 44px;
+  --nav-height: 68px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration: 200ms;
+}
+
+/* Dark theme (default when the system is dark or data-theme="dark"). */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #0e1011;
+  --surface: #15181a;
+  --surface-raised: #1b1f21;
+  --surface-soft: #23282a;
+  --line: #30363a;
+  --line-soft: #252a2d;
+  --text: #f1f3f2;
+  --text-2: #c6cbc8;
+  --muted: #9ba29f;
+
+  --orange-50: #24150e;
+  --orange-100: #3a1f12;
+  --orange-500: #ff6a2b;
+  --orange-600: #ff8a57;
+  --orange: var(--orange-500);
+  --orange-text: #ff8a57;
+  --on-orange: #111314;
+
+  --lime: #ccff00;
+  --lime-text: #d4ff33;
+  --lime-fill: #ccff00;
+  --on-lime: #111314;
+  --success: #b8f000;
+  --success-bg: #1d260a;
+
+  --danger: #ff7a6e;
+  --danger-bg: #2c1513;
+  --focus: var(--orange-500);
+
+  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.35), 0 1px 3px rgb(0 0 0 / 0.25);
+  --shadow-2: 0 8px 24px rgb(0 0 0 / 0.4), 0 2px 6px rgb(0 0 0 / 0.3);
+
+  --map-bg: #171b18;
+  --contour: #4c564e;
+  --glass: rgb(16 18 19 / 0.88);
+  --route: var(--lime);
+  --route-shadow: #0b0c0c;
+  --surface-paved: var(--lime);
+  --surface-gravel: var(--orange);
+  --surface-unknown: #5b605d;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ink: #f6f6f3;
+  --surface: #ffffff;
+  --surface-raised: #fbfbf9;
+  --surface-soft: #efeee9;
+  --line: #dddcd5;
+  --line-soft: #ebeae4;
+  --text: #16181a;
+  --text-2: #3d4240;
+  --muted: #5c6360;
+
+  --orange-50: #fff5ef;
+  --orange-100: #ffe5d6;
+  --orange-500: #f05a1a;
+  --orange-600: #c24100;
+  --orange: var(--orange-500);
+  --orange-text: #b53d00;
+  --on-orange: #16181a;
+
+  --lime: #5d8c00;
+  --lime-text: #456800;
+  --lime-fill: #456800;
+  --on-lime: #ffffff;
+  --success: #3f6b00;
+  --success-bg: #eef6dc;
+
+  --danger: #b42318;
+  --danger-bg: #fdecea;
+  --focus: var(--orange-600);
+
+  --shadow-1: 0 1px 2px rgb(22 24 26 / 0.05), 0 1px 3px rgb(22 24 26 / 0.07);
+  --shadow-2: 0 8px 24px rgb(22 24 26 / 0.09), 0 2px 6px rgb(22 24 26 / 0.06);
+
+  --map-bg: #e9ede2;
+  --contour: #8fa088;
+  --glass: rgb(255 255 255 / 0.84);
+  --route: var(--orange);
+  --route-shadow: #ffffff;
+  --surface-unknown: #9aa09b;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    color-scheme: light;
+    --ink: #f6f6f3;
+    --surface: #ffffff;
+    --surface-raised: #fbfbf9;
+    --surface-soft: #efeee9;
+    --line: #dddcd5;
+    --line-soft: #ebeae4;
+    --text: #16181a;
+    --text-2: #3d4240;
+    --muted: #5c6360;
+
+    --orange-50: #fff5ef;
+    --orange-100: #ffe5d6;
+    --orange-500: #f05a1a;
+    --orange-600: #c24100;
+    --orange: var(--orange-500);
+    --orange-text: #b53d00;
+    --on-orange: #16181a;
+
+    --lime: #5d8c00;
+    --lime-text: #456800;
+    --lime-fill: #456800;
+    --on-lime: #ffffff;
+    --success: #3f6b00;
+    --success-bg: #eef6dc;
+
+    --danger: #b42318;
+    --danger-bg: #fdecea;
+    --focus: var(--orange-600);
+
+    --shadow-1: 0 1px 2px rgb(22 24 26 / 0.05), 0 1px 3px rgb(22 24 26 / 0.07);
+    --shadow-2: 0 8px 24px rgb(22 24 26 / 0.09), 0 2px 6px rgb(22 24 26 / 0.06);
+
+    --map-bg: #e9ede2;
+    --contour: #8fa088;
+    --glass: rgb(255 255 255 / 0.84);
+    --route: var(--orange);
+    --route-shadow: #ffffff;
+    --surface-unknown: #9aa09b;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration: 0ms;
+  }
+}

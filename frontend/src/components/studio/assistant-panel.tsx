@@ -163,7 +163,7 @@ export function AssistantPanel({
 
   if (!open) {
     return (
-      <button type="button" className="assistant-fab button button-primary" onClick={() => setOpen(true)} data-tour="assistant">
+      <button type="button" className="assistant-fab button button-secondary" onClick={() => setOpen(true)} data-tour="assistant">
         <Sparkles size={17} /> Ask the route assistant
       </button>
     );

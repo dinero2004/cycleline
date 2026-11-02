@@ -31,12 +31,12 @@
   align-items: center;
   margin: 0 auto;
   padding: 64px 0 72px;
-  gap: 56px;
+  gap: 48px;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
 }
 
 .hero-copy h1 {
-  margin: 14px 0 22px;
+  margin: 12px 0 20px;
   font-size: clamp(3.4rem, 8.2vw, 7.4rem);
 }
 
@@ -44,7 +44,7 @@
   max-width: 34rem;
   margin: 0;
   color: var(--text-2);
-  font-size: 1.08rem;
+  font-size: var(--text-base);
   line-height: 1.6;
 }
 
@@ -58,26 +58,26 @@
 .hero-proof {
   display: grid;
   max-width: 34rem;
-  margin: 44px 0 0;
+  margin: 48px 0 0;
   border-top: 1px solid var(--line);
   grid-template-columns: repeat(3, 1fr);
 }
 
 .hero-proof div {
   display: flex;
-  padding: 16px 14px 0 0;
+  padding: 16px 12px 0 0;
   flex-direction: column-reverse;
   gap: 4px;
 }
 
 .hero-proof div + div {
-  padding-left: 14px;
+  padding-left: 12px;
   border-left: 1px solid var(--line);
 }
 
 .hero-proof dt {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
   line-height: 1.35;
 }
 
@@ -85,8 +85,8 @@
   margin: 0;
   color: var(--lime-text);
   font-family: var(--font-display);
-  font-size: 2.4rem;
-  font-weight: 800;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
   line-height: 1;
 }
 
@@ -106,7 +106,7 @@
 .mockup-bar {
   display: flex;
   align-items: center;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--line);
   gap: 12px;
 }
@@ -114,14 +114,13 @@
 .mockup-bar strong {
   margin-left: auto;
   font-family: var(--font-display);
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: var(--text-base);
+  letter-spacing: 0;
 }
 
 .mockup-dots {
   display: flex;
-  gap: 5px;
+  gap: 4px;
 }
 
 .mockup-dots i {
@@ -137,7 +136,7 @@
 
 .mockup-side {
   display: flex;
-  padding: 14px;
+  padding: 12px;
   border-right: 1px solid var(--line);
   background: var(--surface-raised);
   flex-direction: column;
@@ -153,23 +152,22 @@
 .mockup-metrics dt {
   color: var(--muted);
   font-family: var(--font-display);
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
 }
 
 .mockup-metrics dd {
-  margin: 2px 0 0;
+  margin: 0 0 0;
   font-family: var(--font-display);
-  font-size: 1.7rem;
-  font-weight: 800;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
   line-height: 1;
 }
 
 .mockup-metrics small {
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--text-md);
 }
 
 .mockup-map {
@@ -193,25 +191,25 @@
 }
 
 .mockup-chart {
-  padding: 34px 14px 10px;
+  padding: 32px 12px 8px;
   border-top: 1px solid var(--line);
 }
 
 .stat-chip {
   position: absolute;
   display: flex;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid var(--line);
   background: var(--glass);
   backdrop-filter: blur(12px);
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
 .stat-chip strong {
   font-family: var(--font-display);
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
   line-height: 1;
 }
 
@@ -237,8 +235,8 @@
 .section-heading {
   display: grid;
   max-width: 760px;
-  margin-bottom: 40px;
-  gap: 14px;
+  margin-bottom: 32px;
+  gap: 12px;
 }
 
 .section-heading h2 {
@@ -249,7 +247,7 @@
 .section-heading p {
   margin: 0;
   color: var(--text-2);
-  font-size: 1.02rem;
+  font-size: var(--text-base);
   line-height: 1.6;
 }
 
@@ -262,7 +260,7 @@
 
 .bento {
   display: grid;
-  gap: 1px;
+  gap: 0;
   border: 1px solid var(--line);
   background: var(--line);
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -270,7 +268,7 @@
 
 .bento-card {
   display: grid;
-  padding: 30px;
+  padding: 32px;
   background: var(--surface);
   align-content: start;
   gap: 24px;
@@ -287,7 +285,7 @@
 }
 
 .bento-copy h3 {
-  margin: 10px 0 12px;
+  margin: 8px 0 12px;
   font-size: clamp(1.8rem, 3vw, 2.4rem);
 }
 
@@ -317,29 +315,28 @@
 }
 
 .metric-row div {
-  padding: 12px 10px 0 0;
+  padding: 12px 8px 0 0;
 }
 
 .metric-row dt {
   color: var(--muted);
   font-family: var(--font-display);
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
 }
 
 .metric-row dd {
   margin: 4px 0 0;
   font-family: var(--font-display);
-  font-size: 1.35rem;
-  font-weight: 800;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
 }
 
 .bento-note {
   margin: 0;
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: var(--text-xs);
 }
 
 .gpx-preview,
@@ -352,7 +349,7 @@
   background: var(--ink);
   color: var(--text-2);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.72rem;
+  font-size: var(--text-xs);
   line-height: 1.55;
 }
 
@@ -366,13 +363,12 @@
 }
 
 .device-list li {
-  padding: 8px 14px;
+  padding: 8px 12px;
   border: 1px solid var(--line);
   font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
 }
 
 /* Route cards */
@@ -403,12 +399,11 @@
 
 .badge {
   position: absolute;
-  padding: 5px 9px;
+  padding: 4px 8px;
   font-family: var(--font-display);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
 }
 
 .badge-distance {
@@ -434,22 +429,21 @@
 .route-card-body h4 {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
   line-height: 1;
-  text-transform: uppercase;
 }
 
 .route-card-body p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
 }
 
 .route-card-climb {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 /* How it works */
@@ -474,45 +468,44 @@
 .how-copy {
   display: flex;
   max-width: 620px;
-  padding: 80px 56px;
+  padding: 80px 48px;
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .how-copy h2 {
-  margin: 0 0 18px;
+  margin: 0 0 16px;
   font-size: clamp(2.4rem, 4.6vw, 4.2rem);
 }
 
 .how-copy ol {
   display: grid;
   padding: 0;
-  margin: 0 0 22px;
+  margin: 0 0 20px;
   list-style: none;
 }
 
 .how-copy li {
   display: grid;
-  padding: 18px 0;
+  padding: 16px 0;
   border-top: 1px solid var(--line);
-  gap: 18px;
+  gap: 16px;
   grid-template-columns: 44px 1fr;
 }
 
 .how-copy li > span {
   color: var(--orange-text);
   font-family: var(--font-display);
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-semibold);
   line-height: 1;
 }
 
 .how-copy li strong {
   font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  text-transform: uppercase;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
 }
 
 .how-copy li p {
@@ -537,7 +530,7 @@
 }
 
 .final-cta h2 {
-  margin: 22px 0 18px;
+  margin: 20px 0 16px;
   font-size: clamp(3rem, 8vw, 6.6rem);
 }
 
@@ -578,7 +571,7 @@
   .bento-card,
   .bento-card:nth-child(3),
   .bento-wide {
-    padding: 22px 18px;
+    padding: 20px 16px;
     grid-column: auto;
     grid-template-columns: 1fr;
   }
@@ -601,7 +594,7 @@
   }
 
   .mockup-metrics dd {
-    font-size: 1.25rem;
+    font-size: var(--text-lg);
   }
 
   .mockup-map {
@@ -613,7 +606,7 @@
   }
 
   .hero-proof dd {
-    font-size: 1.9rem;
+    font-size: var(--text-xl);
   }
 
   .how-section {
@@ -662,14 +655,13 @@
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 8px;
   color: var(--lime-text);
   font-family: var(--font-display);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  gap: 6px;
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  gap: 4px;
 }
 
 .demo-link:hover {

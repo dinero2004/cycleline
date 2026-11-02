@@ -122,7 +122,7 @@ export default async function DashboardPage() {
               <RouteIcon size={24} />
               <h3>No saved lines yet.</h3>
               <p>Your first planned route will appear here.</p>
-              <Link href="/planner" className="button button-acid button-small">
+              <Link href="/planner" className="button button-secondary button-small">
                 Plan now <ArrowRight size={16} />
               </Link>
             </div>

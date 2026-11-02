@@ -103,7 +103,7 @@ export default async function RoutesPage() {
           <Route size={32} />
           <h2>No saved routes yet.</h2>
           <p>Plan a real cycle route, review the line, then save it to your personal library.</p>
-          <Link href="/planner" className="button button-acid">
+          <Link href="/planner" className="button button-secondary">
             Plan your first route
           </Link>
         </div>

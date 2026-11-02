@@ -132,7 +132,7 @@ function NewsComposer() {
             <option>Community</option>
           </select>
         </label>
-        <button type="button" className="button button-dark" onClick={generate} disabled={isPending}>
+        <button type="button" className="button button-secondary" onClick={generate} disabled={isPending}>
           {isPending ? <LoaderCircle className="spin" size={17} /> : <Sparkles size={17} />}
           Generate starter draft
         </button>
@@ -400,7 +400,7 @@ export function AdminConsole({
                       <input type="hidden" name="user_id" value={user.id} />
                       <input name="password" type="password" placeholder="Minimum 6 characters" minLength={6} required />
                       <input name="password_confirmation" type="password" placeholder="Repeat password" minLength={6} required />
-                      <button className="button button-dark button-small">Reset password</button>
+                      <button className="button button-secondary button-small">Reset password</button>
                     </form>
                   </details>
                   <form action={adminResetDataAction}>
