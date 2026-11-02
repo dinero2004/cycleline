@@ -22,6 +22,19 @@ export interface StudioDraft {
 let counter = 0;
 export const waypointId = () => `w${Date.now().toString(36)}${(counter++).toString(36)}`;
 
+const MAX_WAYPOINTS = 25;
+
+/** The start field: replaces the first waypoint (or starts the route). */
+export function withStart(waypoints: Waypoint[], start: Waypoint): Waypoint[] {
+  return [start, ...waypoints.slice(1)].slice(0, MAX_WAYPOINTS);
+}
+
+/** The destination field: replaces the last waypoint, or follows a lone start. */
+export function withFinish(waypoints: Waypoint[], finish: Waypoint): Waypoint[] {
+  if (waypoints.length < 2) return [...waypoints, finish];
+  return [...waypoints.slice(0, -1), finish].slice(0, MAX_WAYPOINTS);
+}
+
 const round5 = (n: number) => Math.round(n * 1e5) / 1e5;
 
 /** Share link query: w=lat,lng|lat,lng&p=gravel (no account data, just the plan). */

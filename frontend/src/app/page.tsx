@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ArrowRight, ChevronRight, Download, Mountain, Route } from "lucide-react";
 import { HeroMockup } from "@/components/home/hero-mockup";
 import { PublicFooter } from "@/components/public-footer";
@@ -11,6 +12,7 @@ import { SAMPLE_ROUTES } from "@/data/samples";
 import { buildGpx } from "@/lib/routing/gpx";
 import { estimateDurationS, formatDuration } from "@/lib/routing/metrics";
 import type { Fitness, RideProfile } from "@/lib/routing/types";
+import { FlashToast } from "@/components/flash-toast";
 
 const PROFILE_LABEL: Record<RideProfile, string> = {
   road: "Road",
@@ -41,6 +43,9 @@ export default function HomePage() {
     <div className="marketing-page">
       <PublicHeader />
 
+      <Suspense>
+        <FlashToast />
+      </Suspense>
       <main id="main">
         <section className="hero" aria-labelledby="hero-title">
           <div className="hero-backdrop" aria-hidden="true" />

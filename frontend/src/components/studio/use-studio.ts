@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { manualRoute, waypointId, type Waypoint } from "@/lib/studio";
+import { manualRoute, waypointId, withFinish, withStart, type Waypoint } from "@/lib/studio";
 import type { Fitness, LatLng, Position, RankedRoute, RideProfile, Route, RoutePreferences } from "@/lib/routing/types";
 
 export interface ApiError {
@@ -87,6 +87,14 @@ export function useStudio(init: StudioInit) {
         next.splice(index ?? next.length, 0, { id: waypointId(), point, label });
         return next.slice(0, 25);
       }),
+    [setWaypoints],
+  );
+  const setStart = useCallback(
+    (point: LatLng, label?: string) => setWaypoints((current) => withStart(current, { id: waypointId(), point, label })),
+    [setWaypoints],
+  );
+  const setFinish = useCallback(
+    (point: LatLng, label?: string) => setWaypoints((current) => withFinish(current, { id: waypointId(), point, label })),
     [setWaypoints],
   );
   const moveWaypoint = useCallback(
@@ -210,7 +218,7 @@ export function useStudio(init: StudioInit) {
 
   return {
     name, setName: (value: string) => { setName(value); setDirty(true); },
-    waypoints, addWaypoint, moveWaypoint, removeWaypoint, reorderWaypoint, reverse, clear,
+    waypoints, addWaypoint, setStart, setFinish, moveWaypoint, removeWaypoint, reorderWaypoint, reverse, clear,
     undo, canUndo: history.length > 0,
     profile, setProfile: (value: RideProfile) => { setProfile(value); setDirty(true); },
     preferences, setPreferences: (value: RoutePreferences) => { setPreferences(value); setDirty(true); },

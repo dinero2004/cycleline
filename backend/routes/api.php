@@ -21,6 +21,8 @@ Route::get('/news/{news:slug}', [NewsController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [UserController::class, 'show']);
     Route::patch('/me', [UserController::class, 'update']);
+    Route::put('/me/password', [UserController::class, 'updatePassword'])->middleware('throttle:account');
+    Route::delete('/me', [UserController::class, 'destroy'])->middleware('throttle:account');
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
     Route::apiResource('/bikes', BikeController::class)->except(['show']);

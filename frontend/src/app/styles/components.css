@@ -1,0 +1,644 @@
+/*
+ * Shared components: Button, Field, Check, Tabs, Card, Dialog, Toast.
+ * Tokens live in tokens.css; docs/STYLE-GUIDE.md lists every class and state.
+ */
+
+/* ---------- Button ---------- */
+.button {
+  display: inline-flex;
+  min-height: var(--control-height);
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-base);
+  text-align: center;
+  transition:
+    background-color var(--duration) var(--ease-out),
+    border-color var(--duration) var(--ease-out),
+    color var(--duration) var(--ease-out);
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.button[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* Primary: the one orange action per screen. button-acid and button-dark are older names. */
+.button-primary,
+.button-acid,
+.button-dark {
+  background: var(--orange);
+  color: var(--on-orange);
+}
+
+.button-primary:hover:not(:disabled),
+.button-acid:hover:not(:disabled),
+.button-dark:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orange) 86%, var(--text));
+}
+
+/* Secondary: outlined neutral. */
+.button-secondary,
+.button-light {
+  border-color: var(--line);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.button-secondary:hover:not(:disabled),
+.button-light:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--text) 35%, var(--line));
+  background: var(--surface-soft);
+}
+
+/* Ghost: text-only until hovered. */
+.button-ghost {
+  background: transparent;
+  color: var(--text);
+}
+
+.button-ghost:hover:not(:disabled) {
+  background: var(--surface-soft);
+}
+
+.button-danger {
+  border-color: color-mix(in srgb, var(--danger) 45%, var(--line));
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.button-danger:hover:not(:disabled) {
+  border-color: var(--danger);
+}
+
+.button-small {
+  min-height: var(--control-height-small);
+  padding: 0 var(--space-4);
+  font-size: var(--text-md);
+  line-height: var(--leading-md);
+}
+
+.button-full {
+  width: 100%;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ---------- Links ---------- */
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 4px;
+  transition: text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+.text-link:hover {
+  text-decoration-color: currentColor;
+}
+
+.back-link {
+  display: inline-flex;
+  min-height: var(--control-height-small);
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--muted);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.back-link:hover {
+  color: var(--text);
+}
+
+.link-button {
+  display: inline-flex;
+  min-height: var(--control-height-small);
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    text-decoration-color var(--duration-fast) var(--ease-out);
+}
+
+.link-button:hover {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+
+.link-button.danger {
+  color: var(--danger);
+}
+
+/* ---------- Icon button ---------- */
+.icon-button {
+  display: inline-flex;
+  width: var(--control-height-small);
+  height: var(--control-height-small);
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+
+.icon-button:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--text) 35%, var(--line));
+  background: var(--surface-soft);
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.icon-button.danger {
+  color: var(--danger);
+}
+
+/* ---------- Field ---------- */
+/* Base control: every text input, select and textarea in the app. */
+:where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="hidden"], [type="file"]), textarea, select) {
+  width: 100%;
+  min-height: var(--control-height);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+:where(input, textarea, select)::placeholder {
+  color: color-mix(in srgb, var(--muted) 80%, transparent);
+}
+
+:where(input:not([type="checkbox"], [type="radio"], [type="range"]), textarea, select):hover:not(:disabled, :focus) {
+  border-color: color-mix(in srgb, var(--text) 28%, var(--line));
+}
+
+:where(input:not([type="checkbox"], [type="radio"], [type="range"]), textarea, select):focus-visible {
+  border-color: var(--focus);
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+:where(input, textarea, select):disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+:where(input, textarea, select)[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+:where(textarea) {
+  min-height: 112px;
+  padding-top: var(--space-3);
+  padding-bottom: var(--space-3);
+  resize: vertical;
+}
+
+:where(select) {
+  padding-right: var(--space-12);
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    calc(100% - 22px) 50%,
+    calc(100% - 17px) 50%;
+  background-repeat: no-repeat;
+  background-size: 5px 5px;
+}
+
+/* Form layouts: 20px between fields, 32px between groups. */
+.auth-form,
+.stack-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.form-group + .form-group {
+  margin-top: var(--space-8);
+}
+
+/* Label above its control, never boxed. */
+.stack-form label:not(.check-label) {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-sm);
+}
+
+/* Field component: label row, control, then the live message area. */
+.field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.field-label {
+  margin-bottom: var(--space-2);
+  color: var(--text);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-sm);
+}
+
+
+
+.field-control {
+  position: relative;
+  display: block;
+}
+
+/* Fixed 48px slots: leading icon on the left, toggle on the right. */
+.field-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  width: var(--control-height);
+  height: var(--control-height);
+  place-items: center;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.field-control.has-icon > input {
+  padding-left: 44px;
+}
+
+.field-control.has-action > input {
+  padding-right: var(--control-height);
+}
+
+.field-action {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: grid;
+  width: var(--control-height-small);
+  height: var(--control-height-small);
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.field-action:hover {
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+/* Helper and error text: 6px under the control, icon + words, never colour alone. */
+.field-message,
+.field-hint,
+.form-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-sm);
+}
+
+.field-message svg,
+.form-error svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+.field-message.is-error,
+.form-error {
+  color: var(--danger);
+}
+
+.field-message.is-warning {
+  color: var(--orange-text);
+}
+
+.field-message.is-success {
+  color: var(--success);
+}
+
+/* Inline form-level error (not tied to one field). */
+.form-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid color-mix(in srgb, var(--danger) 35%, transparent);
+  border-radius: var(--radius-control);
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: var(--text-md);
+  line-height: var(--leading-md);
+}
+
+.form-alert svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+/* Password strength: 4 quiet segments. */
+.strength {
+  display: grid;
+  margin-top: var(--space-2);
+  gap: var(--space-1);
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.strength[data-score="0"] {
+  visibility: hidden;
+}
+
+.strength > span {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--line);
+  transition: background-color var(--duration) var(--ease-out);
+}
+
+.strength[data-score="1"] > span:nth-child(-n + 1) {
+  background: var(--danger);
+}
+
+.strength[data-score="2"] > span:nth-child(-n + 2) {
+  background: var(--orange);
+}
+
+.strength[data-score="3"] > span:nth-child(-n + 3),
+.strength[data-score="4"] > span {
+  background: var(--success);
+}
+
+.input-with-unit {
+  position: relative;
+  display: block;
+}
+
+.input-with-unit input {
+  padding-right: var(--space-12);
+}
+
+.input-with-unit > span {
+  position: absolute;
+  top: 0;
+  right: var(--space-4);
+  display: grid;
+  height: var(--control-height);
+  place-items: center;
+  color: var(--muted);
+  font-size: var(--text-md);
+  pointer-events: none;
+}
+
+/* ---------- Check ---------- */
+.check-label {
+  display: inline-flex;
+  min-height: var(--control-height-small);
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--text-2);
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  cursor: pointer;
+}
+
+.check-label input {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  margin: 0;
+  accent-color: var(--orange);
+}
+
+/* ---------- Tabs (underlined) ---------- */
+.tabs {
+  display: flex;
+  gap: var(--space-6);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.tabs [role="tab"] {
+  position: relative;
+  min-height: var(--control-height);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.tabs [role="tab"]::after {
+  position: absolute;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  content: "";
+  transition: background-color var(--duration) var(--ease-out);
+}
+
+.tabs [role="tab"]:hover {
+  color: var(--text);
+}
+
+.tabs [role="tab"][aria-selected="true"] {
+  color: var(--text);
+}
+
+.tabs [role="tab"][aria-selected="true"]::after {
+  background: var(--text);
+}
+
+/* ---------- Card ---------- */
+.card {
+  padding: var(--space-6);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-1);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.card-title {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
+  line-height: var(--leading-lg);
+}
+
+.card-description {
+  margin: var(--space-1) 0 0;
+  color: var(--muted);
+  font-size: var(--text-md);
+  line-height: var(--leading-md);
+}
+
+.card.is-danger {
+  border-color: color-mix(in srgb, var(--danger) 30%, var(--line-soft));
+}
+
+/* ---------- Dialog ---------- */
+.dialog {
+  width: min(calc(100vw - var(--space-8)), 440px);
+  max-height: calc(100dvh - var(--space-8));
+  margin: auto;
+  padding: var(--space-6);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  color: var(--text);
+}
+
+.dialog::backdrop {
+  background: rgb(8 9 10 / 0.55);
+}
+
+.dialog h2 {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-lg);
+  line-height: var(--leading-lg);
+  letter-spacing: 0;
+}
+
+.dialog p {
+  margin: 0 0 var(--space-5);
+  color: var(--text-2);
+  font-size: var(--text-md);
+  line-height: var(--leading-md);
+}
+
+.dialog .button-row {
+  justify-content: flex-end;
+  margin-top: var(--space-6);
+}
+
+/* Narrow screens: full-width buttons, the action within thumb reach at the bottom. */
+@media (max-width: 480px) {
+  .dialog .button-row {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
+
+/* ---------- Toast (sonner) ---------- */
+/* Colours come in through sonner's own variables, set on <Toaster> in layout.tsx. */
+[data-sonner-toast] [data-icon] {
+  color: var(--muted);
+}
+
+[data-sonner-toast][data-type="success"] [data-icon] {
+  color: var(--success);
+}
+
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: var(--danger);
+}
+
+/* ---------- Pills ---------- */
+.pill {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  gap: 6px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-soft);
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.pill.is-accent {
+  background: var(--orange-50);
+  color: var(--orange-text);
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation-duration: 2.4s;
+  }
+}
+
+.card-header:last-child {
+  margin-bottom: 0;
+}

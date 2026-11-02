@@ -9,13 +9,23 @@ import "./globals.css";
 const barlow = Barlow_Condensed({
   variable: "--font-barlow",
   subsets: ["latin"],
-  weight: ["600", "700", "800"],
+  weight: ["600"],
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
 });
+
+// Sonner reads its colours from these variables; they point at the theme tokens.
+const toastStyle = {
+  "--normal-bg": "var(--surface)",
+  "--normal-border": "var(--line-soft)",
+  "--normal-text": "var(--text)",
+  "--border-radius": "var(--radius-card)",
+  fontFamily: "var(--font-body)",
+} as React.CSSProperties;
 
 export const metadata: Metadata = {
   title: {
@@ -30,8 +40,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: dark)", color: "#0b0c0c" },
-    { media: "(prefers-color-scheme: light)", color: "#f4f3ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1011" },
+    { media: "(prefers-color-scheme: light)", color: "#f6f6f3" },
   ],
 };
 
@@ -50,7 +60,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body suppressHydrationWarning>
         <Providers>{children}</Providers>
         <OfflineStatus />
-        <Toaster position="bottom-right" closeButton />
+        <Toaster position="top-right" closeButton style={toastStyle} />
       </body>
     </html>
   );

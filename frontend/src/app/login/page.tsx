@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Check } from "lucide-react";
 import { auth } from "@/auth";
 import { AuthPanel } from "@/components/auth-panel";
 import { Logo } from "@/components/logo";
@@ -9,6 +9,8 @@ import { Logo } from "@/components/logo";
 export const metadata = {
   title: "Sign in",
 };
+
+const BENEFITS = ["Save every route and ride it again", "Suggestions that match your fitness", "Your bikes, ready for the next line"];
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ mode?: string }> }) {
   const session = await auth();
@@ -20,39 +22,36 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="auth-page">
       <section className="auth-visual">
-        <Image
-          src="/images/cycling/city-community.png"
-          alt="A group of cyclists riding together in a protected city lane"
-          fill
-          priority
-          sizes="(max-width: 900px) 0vw, 52vw"
-        />
-        <div className="auth-visual-overlay" />
+        <Image src="/images/cycling/city-community.png" alt="" fill priority sizes="(max-width: 960px) 0vw, 48vw" />
         <div className="auth-visual-content">
           <Logo />
           <div>
-            <span className="eyebrow">One account. Every ride.</span>
-            <h2>Keep the routes worth riding again.</h2>
+            <p className="auth-visual-title">Keep the routes worth riding again.</p>
             <ul>
-              <li>
-                <CheckCircle2 size={18} /> Personal route library
-              </li>
-              <li>
-                <CheckCircle2 size={18} /> Fitness-aware suggestions
-              </li>
-              <li>
-                <CheckCircle2 size={18} /> Your complete bike garage
-              </li>
+              {BENEFITS.map((benefit) => (
+                <li key={benefit}>
+                  <Check size={16} aria-hidden="true" /> {benefit}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
       </section>
+
       <section className="auth-form-side">
-        <Link href="/" className="back-link">
-          <ArrowLeft size={16} /> Back to CycleLine
-        </Link>
+        <header className="auth-topbar">
+          <Link href="/" className="back-link">
+            <ArrowLeft size={16} aria-hidden="true" /> CycleLine
+          </Link>
+          <span className="auth-brand">
+            <Logo />
+          </span>
+        </header>
         <AuthPanel initialMode={mode === "register" ? "register" : "login"} />
-        <p className="auth-legal">By continuing, you agree to keep the rubber side down.</p>
+        <p className="auth-legal">
+          By continuing you agree to keep the rubber side down, and to our <Link href="/privacy">privacy notice</Link>.{" "}
+          <Link href="/imprint">Imprint</Link>
+        </p>
       </section>
     </main>
   );

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { BackendError, backendFetch } from "@/lib/backend";
 import { z } from "zod";
 import { fitnessFor } from "@/lib/api";
@@ -49,49 +49,102 @@ export async function registerAction(_: ActionState, formData: FormData): Promis
   }
 }
 
-export async function updateProfileAction(formData: FormData) {
+export async function updateProfileAction(_: ActionState, formData: FormData): Promise<ActionState> {
   const session = await tokenOrRedirect();
-  await backendFetch("me", {
-    method: "PATCH",
-    token: session.accessToken,
-    body: {
-      username: formData.get("username"),
-      email: formData.get("email"),
-      bio: formData.get("bio"),
-      fitness_level: formData.get("fitness_level"),
-      weekly_distance_goal: Number(formData.get("weekly_distance_goal")),
-      preferred_distance: Number(formData.get("preferred_distance")),
-    },
-  });
+  try {
+    await backendFetch("me", {
+      method: "PATCH",
+      token: session.accessToken,
+      body: {
+        username: formData.get("username"),
+        email: formData.get("email"),
+        bio: formData.get("bio") || null,
+        fitness_level: formData.get("fitness_level"),
+        weekly_distance_goal: Number(formData.get("weekly_distance_goal")),
+        preferred_distance: Number(formData.get("preferred_distance")),
+      },
+    });
+  } catch (error) {
+    return actionError(error);
+  }
   revalidatePath("/profile");
   revalidatePath("/dashboard");
+  return { ok: true, message: "Profile saved." };
 }
 
-export async function addBikeAction(formData: FormData) {
+export async function addBikeAction(_: ActionState, formData: FormData): Promise<ActionState> {
   const session = await tokenOrRedirect();
-  await backendFetch("bikes", {
-    method: "POST",
-    token: session.accessToken,
-    body: {
-      name: formData.get("name"),
-      type: formData.get("type"),
-      weight_kg: formData.get("weight_kg") || null,
-      notes: formData.get("notes") || null,
-      is_default: formData.get("is_default") === "on",
-    },
-  });
+  try {
+    await backendFetch("bikes", {
+      method: "POST",
+      token: session.accessToken,
+      body: {
+        name: formData.get("name"),
+        type: formData.get("type"),
+        weight_kg: formData.get("weight_kg") || null,
+        notes: formData.get("notes") || null,
+        is_default: formData.get("is_default") === "on",
+      },
+    });
+  } catch (error) {
+    return actionError(error);
+  }
   revalidatePath("/profile");
   revalidatePath("/planner");
+  return { ok: true, message: `${String(formData.get("name"))} is in your garage.` };
 }
 
-export async function deleteBikeAction(formData: FormData) {
+export async function setDefaultBikeAction(bikeId: number): Promise<ActionState> {
   const session = await tokenOrRedirect();
-  await backendFetch(`bikes/${formData.get("bike_id")}`, {
-    method: "DELETE",
-    token: session.accessToken,
-  });
+  try {
+    await backendFetch(`bikes/${bikeId}`, { method: "PATCH", token: session.accessToken, body: { is_default: true } });
+  } catch (error) {
+    return actionError(error);
+  }
   revalidatePath("/profile");
   revalidatePath("/planner");
+  return { ok: true, message: "Default bike changed." };
+}
+
+export async function deleteBikeAction(bikeId: number): Promise<ActionState> {
+  const session = await tokenOrRedirect();
+  try {
+    await backendFetch(`bikes/${bikeId}`, { method: "DELETE", token: session.accessToken });
+  } catch (error) {
+    return actionError(error);
+  }
+  revalidatePath("/profile");
+  revalidatePath("/planner");
+  return { ok: true, message: "Bike removed." };
+}
+
+export async function changePasswordAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  const session = await tokenOrRedirect();
+  try {
+    await backendFetch("me/password", {
+      method: "PUT",
+      token: session.accessToken,
+      body: {
+        current_password: formData.get("current_password"),
+        password: formData.get("password"),
+        password_confirmation: formData.get("password_confirmation"),
+      },
+    });
+  } catch (error) {
+    return actionError(error);
+  }
+  return { ok: true, message: "Password changed. Other devices are signed out." };
+}
+
+export async function deleteAccountAction(_: ActionState, formData: FormData): Promise<ActionState> {
+  const session = await tokenOrRedirect();
+  try {
+    await backendFetch("me", { method: "DELETE", token: session.accessToken, body: { password: formData.get("password") } });
+  } catch (error) {
+    return actionError(error);
+  }
+  await signOut({ redirectTo: "/?account=deleted" });
+  return { ok: true, message: "Account deleted." };
 }
 
 /** Saves (or updates, with routeId) a Route Studio route including its details. */

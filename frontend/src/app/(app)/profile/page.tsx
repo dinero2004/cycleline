@@ -1,191 +1,104 @@
-import { Bike, CheckCircle2, Plus, Trash2 } from "lucide-react";
-import { addBikeAction, deleteBikeAction, updateProfileAction } from "@/app/actions";
+import Link from "next/link";
+import { ArrowRight, Mountain, Route as RouteIcon, Ruler } from "lucide-react";
+import { DangerZone, PasswordCard } from "@/components/profile/account-security";
+import { BikeGarage } from "@/components/profile/bike-garage";
+import { ProfileForm } from "@/components/profile/profile-form";
 import { backendFetch } from "@/lib/backend";
+import { plannerHref } from "@/lib/route-links";
 import { requireSession } from "@/lib/session";
-import type { UserProfile } from "@/types";
+import type { SavedRoute, UserProfile } from "@/types";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Profile and bikes" };
+export const metadata = { title: "Profile" };
+
+const km = new Intl.NumberFormat("en-CH", { maximumFractionDigits: 0 });
+const memberSince = new Intl.DateTimeFormat("en-CH", { month: "long", year: "numeric" });
 
 export default async function ProfilePage() {
   const session = await requireSession();
-  const response = await backendFetch<{ user: UserProfile }>("me", {
-    token: session.accessToken,
-  });
-  const user = response.user;
+  const [{ user }, { routes }] = await Promise.all([
+    backendFetch<{ user: UserProfile }>("me", { token: session.accessToken }),
+    backendFetch<{ routes: SavedRoute[] }>("routes", { token: session.accessToken }).catch(() => ({ routes: [] as SavedRoute[] })),
+  ]);
+
+  const distance = routes.reduce((sum, route) => sum + Number(route.distance_km || 0), 0);
+  const climbing = routes.reduce((sum, route) => sum + (route.elevation_gain_m || 0), 0);
+  const stats = [
+    { label: "Saved routes", value: String(user.routes_count), icon: RouteIcon },
+    { label: "Distance planned", value: `${km.format(distance)} km`, icon: Ruler },
+    { label: "Climbing planned", value: `${km.format(climbing)} m`, icon: Mountain },
+  ];
 
   return (
     <div className="app-page profile-page">
-      <header className="app-page-header">
-        <div>
-          <span className="eyebrow">Rider setup</span>
-          <h1>Your profile shapes the route.</h1>
-          <p>Keep your current form, weekly intention, and bike garage accurate.</p>
+      <header className="profile-header">
+        <span className="profile-avatar" aria-hidden="true">
+          {user.username.slice(0, 2).toUpperCase()}
+        </span>
+        <div className="profile-identity">
+          <h1>{user.username}</h1>
+          <p>
+            {user.bio || "No bio yet."} <span className="profile-since">Member since {memberSince.format(new Date(user.created_at))}.</span>
+          </p>
         </div>
       </header>
 
-      <div className="profile-grid">
-        <section className="content-panel">
-          <div className="panel-heading">
-            <span className="eyebrow">Account</span>
-            <h2>Rider details</h2>
+      <dl className="profile-stats">
+        {stats.map(({ label, value, icon: Icon }) => (
+          <div key={label}>
+            <dt>
+              <Icon size={16} aria-hidden="true" /> {label}
+            </dt>
+            <dd>{value}</dd>
           </div>
-          <form action={updateProfileAction} className="stack-form">
-            <div className="two-column-fields">
-              <label>
-                Username
-                <input name="username" defaultValue={user.username} required />
-              </label>
-              <label>
-                Email
-                <input name="email" type="email" defaultValue={user.email} required />
-              </label>
+        ))}
+      </dl>
+
+      <div className="profile-sections">
+        <ProfileForm user={user} />
+        <BikeGarage bikes={user.bikes} />
+
+        <section className="card" aria-labelledby="routes-title">
+          <header className="card-header">
+            <div>
+              <h2 id="routes-title" className="card-title">
+                Saved routes
+              </h2>
+              <p className="card-description">Your latest routes. Open the library to ride, export or share them.</p>
             </div>
-            <label>
-              Short bio
-              <textarea name="bio" defaultValue={user.bio ?? ""} placeholder="What kind of rider are you?" />
-            </label>
-            <div className="three-column-fields">
-              <label>
-                Fitness
-                <select name="fitness_level" defaultValue={user.fitness_level}>
-                  <option value="beginner">Beginner</option>
-                  <option value="intermediate">Intermediate</option>
-                  <option value="advanced">Advanced</option>
-                </select>
-              </label>
-              <label>
-                Weekly goal
-                <span className="input-with-unit">
-                  <input name="weekly_distance_goal" type="number" min="10" max="1000" defaultValue={user.weekly_distance_goal} />
-                  <span>km</span>
-                </span>
-              </label>
-              <label>
-                Preferred ride
-                <span className="input-with-unit">
-                  <input name="preferred_distance" type="number" min="5" max="300" defaultValue={user.preferred_distance} />
-                  <span>km</span>
-                </span>
-              </label>
+            <Link href="/routes" className="button button-secondary button-small">
+              All routes <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </header>
+          {routes.length ? (
+            <ul className="profile-routes">
+              {routes.slice(0, 3).map((route) => (
+                <li key={route.id}>
+                  <Link href={plannerHref(route)}>
+                    <strong>{route.name}</strong>
+                    <span>
+                      {route.start_name} → {route.end_name}
+                    </span>
+                  </Link>
+                  <span className="profile-route-facts">
+                    {km.format(Number(route.distance_km))} km · {km.format(route.elevation_gain_m)} m
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="empty-inline">
+              <RouteIcon size={22} aria-hidden="true" />
+              <p>
+                No saved routes yet. <Link href="/planner">Plan your first one</Link>.
+              </p>
             </div>
-            <button className="button button-dark">Save profile</button>
-          </form>
+          )}
         </section>
 
-        <aside className="profile-summary">
-          <span className="profile-avatar">{user.username.slice(0, 2).toUpperCase()}</span>
-          <span className="eyebrow">CycleLine rider</span>
-          <h2>{user.username}</h2>
-          <p>{user.bio || "No rider bio yet."}</p>
-          <dl>
-            <div>
-              <dt>Fitness</dt>
-              <dd>{user.fitness_level}</dd>
-            </div>
-            <div>
-              <dt>Routes</dt>
-              <dd>{user.routes_count}</dd>
-            </div>
-            <div>
-              <dt>Bikes</dt>
-              <dd>{user.bikes.length}</dd>
-            </div>
-          </dl>
-        </aside>
+        <PasswordCard username={user.username} />
+        <DangerZone username={user.username} />
       </div>
-
-      <section className="garage-section">
-        <div className="panel-heading-row">
-          <div>
-            <span className="eyebrow">Your garage</span>
-            <h2>Choose the bike before the line.</h2>
-          </div>
-          <span className="target-pill">
-            <Bike size={15} /> {user.bikes.length} {user.bikes.length === 1 ? "bike" : "bikes"}
-          </span>
-        </div>
-
-        <div className="garage-grid">
-          <div className="bike-list">
-            {user.bikes.map((bike) => (
-              <article key={bike.id} className="bike-card">
-                <span className="bike-card-icon">
-                  <Bike size={25} />
-                </span>
-                <div>
-                  <span>{bike.type}</span>
-                  <h3>{bike.name}</h3>
-                  <p>{bike.notes || "Ready for the next route."}</p>
-                  <small>{bike.weight_kg ? `${bike.weight_kg} kg` : "Weight not set"}</small>
-                </div>
-                <div className="bike-card-end">
-                  {bike.is_default && (
-                    <span className="default-pill">
-                      <CheckCircle2 size={14} /> Default
-                    </span>
-                  )}
-                  <form action={deleteBikeAction}>
-                    <input type="hidden" name="bike_id" value={bike.id} />
-                    <button className="icon-button danger" aria-label={`Remove ${bike.name}`}>
-                      <Trash2 size={16} />
-                    </button>
-                  </form>
-                </div>
-              </article>
-            ))}
-            {!user.bikes.length && (
-              <div className="empty-state compact">
-                <Bike size={24} />
-                <h3>Your garage is empty.</h3>
-                <p>Add a bike so the planner can choose a matching route profile.</p>
-              </div>
-            )}
-          </div>
-
-          <form action={addBikeAction} className="content-panel stack-form add-bike-form">
-            <div className="panel-heading">
-              <span className="eyebrow">New bike</span>
-              <h3>Add to garage</h3>
-            </div>
-            <label>
-              Bike name
-              <input name="name" placeholder="e.g. Moss" required minLength={2} />
-            </label>
-            <div className="two-column-fields">
-              <label>
-                Type
-                <select name="type" defaultValue="gravel">
-                  <option value="road">Road</option>
-                  <option value="gravel">Gravel</option>
-                  <option value="mountain">Mountain</option>
-                  <option value="city">City</option>
-                  <option value="electric">Electric</option>
-                  <option value="touring">Touring</option>
-                </select>
-              </label>
-              <label>
-                Weight
-                <span className="input-with-unit">
-                  <input name="weight_kg" type="number" min="3" max="40" step="0.1" placeholder="9.4" />
-                  <span>kg</span>
-                </span>
-              </label>
-            </div>
-            <label>
-              Notes
-              <textarea name="notes" placeholder="Tyres, setup, or the kind of ride it loves." />
-            </label>
-            <label className="check-label">
-              <input type="checkbox" name="is_default" />
-              <span>Use as my default bike</span>
-            </label>
-            <button className="button button-acid">
-              <Plus size={17} /> Add bike
-            </button>
-          </form>
-        </div>
-      </section>
     </div>
   );
 }

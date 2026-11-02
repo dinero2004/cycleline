@@ -38,5 +38,8 @@ class AppServiceProvider extends ServiceProvider
                 Limit::perMinute(120)->by('auth-global'),
             ];
         });
+
+        // Password checks on a signed-in account (change password, delete account), per rider.
+        RateLimiter::for('account', fn (Request $request) => Limit::perMinute(6)->by('account:'.$request->user()?->id));
     }
 }

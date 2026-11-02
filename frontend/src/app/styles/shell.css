@@ -5,13 +5,12 @@
   z-index: 2000;
   top: 8px;
   left: 8px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: var(--orange);
   color: var(--on-orange);
-  font-family: var(--font-display);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
   transform: translateY(-160%);
 }
 
@@ -36,7 +35,7 @@
   min-height: var(--nav-height);
   align-items: center;
   margin: 0 auto;
-  gap: 28px;
+  gap: 24px;
 }
 
 .public-nav {
@@ -53,11 +52,10 @@
   align-items: center;
   padding: 0 12px;
   color: var(--muted);
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
   transition: color 160ms ease;
 }
 
@@ -106,7 +104,7 @@
     border-bottom: 1px solid var(--line);
     background: var(--surface);
     flex-direction: column;
-    gap: 2px;
+    gap: 0;
   }
 
   .mobile-menu-panel[hidden] {
@@ -118,15 +116,14 @@
     min-height: 48px;
     align-items: center;
     border-bottom: 1px solid var(--line-soft);
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+    font-family: var(--font-body);
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0;
   }
 
   .mobile-menu-panel .button {
-    margin-top: 14px;
+    margin-top: 12px;
   }
 }
 
@@ -142,22 +139,22 @@
   width: min(1240px, calc(100% - 32px));
   align-items: center;
   margin: 0 auto;
-  padding: 40px 0;
-  gap: 28px;
+  padding: 32px 0;
+  gap: 24px;
   grid-template-columns: 1fr auto auto;
 }
 
 .footer-brand {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .footer-brand p,
 .footer-copy {
   margin: 0;
   color: var(--muted);
-  font-size: 0.82rem;
+  font-size: var(--text-sm);
 }
 
 .footer-links {
@@ -171,11 +168,10 @@
   min-height: 44px;
   align-items: center;
   color: var(--text-2);
-  font-family: var(--font-display);
-  font-size: 0.92rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0;
 }
 
 .footer-links a:hover {
@@ -214,14 +210,13 @@
     margin-right: auto;
     gap: 8px;
     font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 800;
-    text-transform: uppercase;
+    font-size: var(--text-lg);
+    font-weight: var(--weight-semibold);
   }
 
   .mobile-brand-user {
     color: var(--muted);
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
   }
 }
 
@@ -244,7 +239,7 @@
   padding: env(safe-area-inset-top) 12px 0 16px;
   border-bottom: 1px solid var(--line);
   background: var(--surface);
-  gap: 14px;
+  gap: 12px;
 }
 
 .demo-header .eyebrow {
@@ -252,7 +247,7 @@
 }
 
 .demo-header .logo {
-  font-size: 1.25rem;
+  font-size: var(--text-lg);
 }
 
 .demo-main {
@@ -281,10 +276,10 @@
   max-width: 560px;
   align-items: flex-start;
   margin: 0 auto;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid var(--orange);
   background: var(--surface);
   color: var(--text);
-  font-size: 0.85rem;
+  font-size: var(--text-md);
   gap: 8px;
 }

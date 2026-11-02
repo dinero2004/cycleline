@@ -38,7 +38,7 @@ export async function PublicHeader() {
           <Link className="nav-login" href={account.href}>
             {account.label}
           </Link>
-          <Link className="button button-primary button-small" href="/planner">
+          <Link className="button button-secondary button-small" href="/planner">
             Plan a route
             <ArrowUpRight size={16} />
           </Link>

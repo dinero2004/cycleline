@@ -34,6 +34,7 @@ import type { Fitness, RankedRoute, Route } from "@/lib/routing/types";
 import { encodeShare, RIDE_PROFILES, type StudioDraft } from "@/lib/studio";
 import { BottomSheet, type SheetSnap } from "./bottom-sheet";
 import { PlaceSearch } from "./place-search";
+import { RouteEnds } from "./route-ends";
 import type { MapLayer } from "./studio-map";
 import { useStudio, type Studio, type StudioInit } from "./use-studio";
 
@@ -123,7 +124,7 @@ function ElevationPanel({ studio, compact = false }: { studio: Studio; compact?:
 function WaypointList({ studio }: { studio: Studio }) {
   const { waypoints } = studio;
   if (!waypoints.length) {
-    return <p className="studio-hint">Search for a place, click the map, or press and hold on a phone to add your start.</p>;
+    return <p className="studio-hint">Set a start and a destination above, click the map, or press and hold on a phone.</p>;
   }
   return (
     <ol className="waypoint-list">
@@ -458,16 +459,7 @@ export function RouteStudio({
     <>
       <section className="studio-section" aria-labelledby="overview-title">
         <h3 id="overview-title" className="eyebrow">Route overview</h3>
-        <div ref={searchBox}>
-          <PlaceSearch
-            label={studio.waypoints.length ? "Add a waypoint" : "Start"}
-            placeholder={studio.waypoints.length ? "Add a place…" : "Where do you start?"}
-            onPick={(place) => {
-              studio.addWaypoint(place.coordinates, place.name);
-              if (studio.waypoints.length === 0) setFitKey(`start-${Date.now()}`);
-            }}
-          />
-        </div>
+        <RouteEnds studio={studio} onStartPicked={() => setFitKey(`start-${Date.now()}`)} />
         <Metrics route={route} fitness={studio.fitness} />
         {route && <SurfaceBar mix={route.surfaceMix} inferredM={route.inferredSurfaceM} />}
         {route && route.inferredSurfaceM > 0 && (
@@ -485,6 +477,15 @@ export function RouteStudio({
           )}
         </div>
         <WaypointList studio={studio} />
+        {studio.waypoints.length > 1 && (
+          <div ref={searchBox}>
+            <PlaceSearch
+              label="Add a stop"
+              placeholder="Add a stop on the way"
+              onPick={(place) => studio.addWaypoint(place.coordinates, place.name, studio.waypoints.length - 1)}
+            />
+          </div>
+        )}
         <div className="button-row">
           <button type="button" className="button button-secondary button-small" onClick={() => void studio.compare()} disabled={studio.waypoints.length < 2 || studio.busy !== null}>
             {studio.busy === "alternatives" ? <LoaderCircle size={15} className="spin" /> : <Shuffle size={15} />} Compare routes
@@ -524,7 +525,7 @@ export function RouteStudio({
           <button type="button" className="button button-secondary button-small" onClick={() => void save()} disabled={saving} data-tour="save" aria-label="Save">
             {saving ? <LoaderCircle size={15} className="spin" /> : <Save size={15} />} <span className="hide-sm">Save</span>
           </button>
-          <button type="button" className="button button-primary button-small" onClick={() => void exportGpx()} data-tour="export" aria-label="Export GPX">
+          <button type="button" className="button button-secondary button-small" onClick={() => void exportGpx()} data-tour="export" aria-label="Export GPX">
             <Download size={15} /> <span className="hide-sm">Export</span> GPX
           </button>
         </div>
@@ -579,7 +580,11 @@ export function RouteStudio({
               className="tool"
               onClick={() => {
                 if (isPhone) setSheet("full");
-                setTimeout(() => searchBox.current?.querySelector("input")?.focus(), 50);
+                // The stop search once there is a route, otherwise the first empty end (start, then destination).
+                setTimeout(() => {
+                  const ends = [...document.querySelectorAll<HTMLInputElement>(".route-ends input")];
+                  (searchBox.current?.querySelector("input") ?? ends.find((input) => !input.value) ?? ends[0])?.focus();
+                }, 50);
               }}
               title="Add a waypoint by searching for a place" aria-label="Add a waypoint"
             >
