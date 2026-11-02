@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderCircle, Search } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useState, type ReactNode } from "react";
 import type { LatLng } from "@/lib/routing/types";
 
 interface Place {
@@ -10,31 +10,44 @@ interface Place {
   coordinates: LatLng;
 }
 
-/** Place search with autocomplete (ARIA combobox). Picking a place calls onPick. */
+/**
+ * Place search with autocomplete (ARIA combobox). Picking a place calls onPick.
+ * With `value` the field shows the place it stands for (start, destination) and keeps it after a pick;
+ * without it the field empties after each pick (adding stops).
+ */
 export function PlaceSearch({
   label,
   placeholder,
   onPick,
+  value,
+  icon,
+  action,
 }: {
   label: string;
   placeholder: string;
   onPick: (place: Place) => void;
+  value?: string;
+  icon?: ReactNode;
+  action?: ReactNode;
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(value ?? "");
+  const [shownValue, setShownValue] = useState(value);
+  // Only what the rider types is searched; a value set from outside is just shown.
+  const [search, setSearch] = useState("");
   const [results, setResults] = useState<Place[]>([]);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const id = useId();
-  const picked = useRef(false);
+
+  if (value !== shownValue) {
+    setShownValue(value);
+    setQuery(value ?? "");
+  }
 
   useEffect(() => {
-    if (picked.current) {
-      picked.current = false;
-      return;
-    }
-    const q = query.trim();
+    const q = search.trim();
     if (q.length < 3) return;
     const controller = new AbortController();
     const timer = setTimeout(async () => {
@@ -56,15 +69,15 @@ export function PlaceSearch({
       clearTimeout(timer);
       controller.abort();
     };
-  }, [query]);
+  }, [search]);
 
   function pick(place: Place) {
-    picked.current = true;
-    setQuery(place.name);
+    setSearch("");
     setOpen(false);
     setResults([]);
+    setMessage(null);
+    setQuery(value === undefined ? "" : place.name);
     onPick(place);
-    setQuery("");
   }
 
   return (
@@ -72,30 +85,45 @@ export function PlaceSearch({
       <label htmlFor={`${id}-input`} className="visually-hidden">
         {label}
       </label>
-      <div className="place-search-field">
-        {loading ? <LoaderCircle size={16} className="spin" aria-hidden="true" /> : <Search size={16} aria-hidden="true" />}
+      <div className={`place-search-field${action ? " has-action" : ""}`}>
+        <span className="place-search-icon" aria-hidden="true">
+          {loading ? <LoaderCircle size={16} className="spin" /> : (icon ?? <Search size={16} />)}
+        </span>
         <input
           id={`${id}-input`}
           type="search"
           inputMode="search"
           enterKeyHint="search"
           autoComplete="off"
+          autoCapitalize="off"
+          spellCheck={false}
           role="combobox"
           aria-expanded={open && results.length > 0}
           aria-controls={`${id}-list`}
           aria-autocomplete="list"
           aria-activedescendant={active >= 0 ? `${id}-opt-${active}` : undefined}
+          aria-describedby={message ? `${id}-message` : undefined}
           placeholder={placeholder}
           value={query}
           onChange={(event) => {
             setQuery(event.target.value);
+            setSearch(event.target.value);
             if (event.target.value.trim().length < 3) {
               setResults([]);
               setMessage(null);
             }
           }}
-          onFocus={() => results.length && setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          onFocus={(event) => {
+            if (results.length) setOpen(true);
+            else if (value !== undefined) event.currentTarget.select();
+          }}
+          onBlur={() =>
+            setTimeout(() => {
+              setOpen(false);
+              // Leaving the field without picking puts the current place back.
+              if (value !== undefined) setQuery((typed) => (typed.trim() ? typed : value));
+            }, 150)
+          }
           onKeyDown={(event) => {
             if (event.key === "ArrowDown") {
               event.preventDefault();
@@ -112,6 +140,7 @@ export function PlaceSearch({
             }
           }}
         />
+        {action}
       </div>
       <ul id={`${id}-list`} role="listbox" className="place-results" hidden={!open || results.length === 0} aria-label={`${label} results`}>
         {results.map((place, i) => (
@@ -129,7 +158,7 @@ export function PlaceSearch({
         ))}
       </ul>
       {message && (
-        <p className="field-message" role="status">
+        <p id={`${id}-message`} className="place-search-message" role="status">
           {message}
         </p>
       )}
