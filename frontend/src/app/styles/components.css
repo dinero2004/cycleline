@@ -554,6 +554,8 @@
 /* ---------- Dialog ---------- */
 .dialog {
   width: min(calc(100vw - var(--space-8)), 440px);
+  max-height: calc(100dvh - var(--space-8));
+  margin: auto;
   padding: var(--space-6);
   border: 1px solid var(--line-soft);
   border-radius: var(--radius-card);
@@ -584,6 +586,14 @@
 .dialog .button-row {
   justify-content: flex-end;
   margin-top: var(--space-6);
+}
+
+/* Narrow screens: full-width buttons, the action within thumb reach at the bottom. */
+@media (max-width: 480px) {
+  .dialog .button-row {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
 }
 
 /* ---------- Toast (sonner) ---------- */
@@ -627,4 +637,8 @@
   .spin {
     animation-duration: 2.4s;
   }
+}
+
+.card-header:last-child {
+  margin-bottom: 0;
 }

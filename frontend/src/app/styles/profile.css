@@ -1,1 +1,332 @@
-/* Profile: filled in with the profile redesign. */
+/* Profile (app/(app)/profile/page.tsx, components/profile/*). */
+
+.profile-page {
+  max-width: 880px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.profile-avatar {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-pill);
+  background: var(--orange-50);
+  color: var(--orange-text);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.profile-identity {
+  min-width: 0;
+}
+
+.profile-identity h1 {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--text-xl);
+  line-height: var(--leading-xl);
+}
+
+.profile-identity p {
+  margin: var(--space-1) 0 0;
+  color: var(--text-2);
+  font-size: var(--text-md);
+  line-height: var(--leading-md);
+}
+
+.profile-since {
+  color: var(--muted);
+}
+
+.profile-stats {
+  display: grid;
+  margin: var(--space-6) 0 var(--space-8);
+  gap: var(--space-3);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profile-stats div {
+  padding: var(--space-4);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+}
+
+.profile-stats dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.profile-stats dd {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-lg);
+}
+
+.profile-sections,
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.profile-form .three-column-fields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Save bar: sticks to the bottom, above the keyboard and the safe area, only with unsaved changes. */
+.save-bar {
+  position: sticky;
+  z-index: 20;
+  bottom: max(var(--space-4), env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-5);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-2);
+  animation: save-bar-in var(--duration) var(--ease-out);
+}
+
+.save-bar[hidden] {
+  display: none;
+}
+
+.save-bar p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--text-md);
+}
+
+@keyframes save-bar-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Garage */
+.bike-list,
+.profile-routes {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  flex-direction: column;
+}
+
+.bike-row {
+  display: grid;
+  align-items: center;
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--line-soft);
+  gap: var(--space-4);
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+}
+
+.bike-row:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.bike-row-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: var(--radius-control);
+  background: var(--surface-soft);
+  color: var(--text-2);
+}
+
+.bike-row-text {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.bike-row-text strong {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+.bike-row-text span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bike-row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.add-bike {
+  padding-top: var(--space-5);
+  margin-top: var(--space-5);
+  border-top: 1px solid var(--line-soft);
+}
+
+.bike-list + .add-bike {
+  margin-top: var(--space-3);
+}
+
+/* Saved routes */
+.profile-routes li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line-soft);
+  gap: var(--space-4);
+}
+
+.profile-routes li:first-child {
+  border-top: 0;
+}
+
+.profile-routes a {
+  display: flex;
+  min-width: 0;
+  min-height: 56px;
+  flex: 1;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.profile-routes a strong {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+}
+
+.profile-routes a span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: var(--text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-routes a:hover strong {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.profile-route-facts {
+  flex: none;
+  color: var(--text-2);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.empty-inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-control);
+  color: var(--muted);
+}
+
+.empty-inline p {
+  margin: 0;
+  font-size: var(--text-md);
+}
+
+.empty-inline a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .profile-header {
+    gap: var(--space-4);
+  }
+
+  .profile-avatar {
+    width: 56px;
+    height: 56px;
+  }
+
+  .profile-stats {
+    gap: var(--space-2);
+  }
+
+  .profile-stats div {
+    padding: var(--space-3);
+  }
+
+  .profile-stats dt {
+    font-size: var(--text-xs);
+  }
+
+  .profile-stats dt svg {
+    display: none;
+  }
+
+  .profile-stats dd {
+    font-size: var(--text-base);
+  }
+
+  .profile-form .three-column-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: var(--space-5);
+  }
+
+  .card-header {
+    flex-direction: column;
+  }
+
+  .card-header > .button {
+    width: 100%;
+  }
+
+  .save-bar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-3);
+  }
+
+  .save-bar p {
+    text-align: center;
+  }
+
+  .save-bar .button-row > .button {
+    flex: 1;
+  }
+
+  .bike-row {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+
+  .bike-row-actions {
+    grid-column: 2;
+  }
+
+  .profile-route-facts {
+    display: none;
+  }
+}

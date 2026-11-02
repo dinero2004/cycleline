@@ -6,8 +6,7 @@ import { requireSession } from "@/lib/session";
 import { DownloadGpxButton } from "@/components/download-gpx-button";
 import { RoutePreview } from "@/components/route-preview";
 import { SurfaceBar } from "@/components/viz/surface-bar";
-import { rideProfileForBike } from "@/lib/api";
-import { encodeShare } from "@/lib/studio";
+import { plannerHref } from "@/lib/route-links";
 import type { SavedRoute } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -71,11 +70,7 @@ export default async function RoutesPage() {
               <div className="route-card-actions">
                 <Link
                   className="icon-button"
-                  href={`/planner?${encodeShare(
-                    (route.details?.waypoints ?? [[route.start_lat, route.start_lng], [route.end_lat, route.end_lng]]).map((point, i) => ({ id: String(i), point })),
-                    route.details?.ride_profile ?? rideProfileForBike(route.profile),
-                    route.name,
-                  )}`}
+                  href={plannerHref(route)}
                   aria-label={`Open ${route.name} in Route Studio`}
                 >
                   <PenLine size={17} />
