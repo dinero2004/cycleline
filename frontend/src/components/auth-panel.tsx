@@ -1,32 +1,44 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Eye, EyeOff, LoaderCircle, LockKeyhole, Mail, UserRound } from "lucide-react";
+import { AlertCircle, CheckCircle2, LoaderCircle, Mail, Map as MapIcon, UserRound } from "lucide-react";
 import { getSession, signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { importGuestDraftsAction, registerAction, type ActionState } from "@/app/actions";
+import { Field, Note, PasswordField } from "@/components/ui/field";
+import { validateEmail, validateLogin, validatePassword, validateUsername } from "@/lib/forms";
 import { importableDrafts, removeDrafts } from "@/lib/guest-drafts";
 
+type Mode = "login" | "register";
 const initialState: ActionState = { ok: false, message: "" };
 
-export function AuthPanel({ initialMode = "login" }: { initialMode?: "login" | "register" }) {
+export function AuthPanel({ initialMode = "login" }: { initialMode?: Mode }) {
   const router = useRouter();
-  const [mode, setMode] = useState<"login" | "register">(initialMode);
-  const [showPassword, setShowPassword] = useState(false);
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [showReset, setShowReset] = useState(false);
+  // The success card shows until the rider switches tabs (which dismisses that result).
+  const [dismissed, setDismissed] = useState<ActionState | null>(null);
+  const [password, setPassword] = useState("");
   const [state, registerFormAction, isRegistering] = useActionState(registerAction, initialState);
+  const loginTab = useRef<HTMLButtonElement>(null);
+  const registerTab = useRef<HTMLButtonElement>(null);
+
+  const registered = state.ok && dismissed !== state ? state.message : null;
 
   useEffect(() => {
-    if (state.message) {
-      if (state.ok) {
-        toast.success(state.message);
-      } else {
-        toast.error(state.message);
-      }
-    }
+    if (!state.ok && state.message && !state.errors) toast.error(state.message);
   }, [state]);
+
+  function switchTo(next: Mode) {
+    setMode(next);
+    setLoginError("");
+    setDismissed(state);
+    window.history.replaceState(null, "", next === "register" ? "/login?mode=register" : "/login");
+  }
 
   async function handleLogin(formData: FormData) {
     setIsLoggingIn(true);
@@ -39,7 +51,7 @@ export function AuthPanel({ initialMode = "login" }: { initialMode?: "login" | "
     });
 
     if (result?.error) {
-      setLoginError("We could not match those details. Check them and try again.");
+      setLoginError("That username, email or password doesn't match an account. Check them and try again.");
       setIsLoggingIn(false);
       return;
     }
@@ -47,12 +59,12 @@ export function AuthPanel({ initialMode = "login" }: { initialMode?: "login" | "
     // Guest demo drafts on this device move into the account; failed ones stay in the demo.
     const drafts = importableDrafts();
     if (drafts.length) {
-      const result = await importGuestDraftsAction(
+      const imported = await importGuestDraftsAction(
         drafts.map((d) => ({ id: d.id, name: d.name, profile: d.profile, preferences: d.preferences ?? {}, waypoints: d.waypoints })),
       );
-      removeDrafts(result.imported);
-      if (result.ok) toast.success(result.message);
-      else toast.error(result.message);
+      removeDrafts(imported.imported);
+      if (imported.ok) toast.success(imported.message);
+      else toast.error(imported.message);
     }
 
     const session = await getSession();
@@ -60,164 +72,175 @@ export function AuthPanel({ initialMode = "login" }: { initialMode?: "login" | "
     router.refresh();
   }
 
-  const fieldError = (name: string) => state.errors?.[name]?.[0];
+  const fieldError = (name: string) => (state.ok ? undefined : state.errors?.[name]?.[0]);
+  const tabRef = { login: loginTab, register: registerTab };
 
   return (
     <div className="auth-panel">
-      <div className="auth-tabs" role="tablist" aria-label="Account action">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "login"}
-          className={mode === "login" ? "active" : undefined}
-          onClick={() => setMode("login")}
-        >
-          Sign in
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={mode === "register"}
-          className={mode === "register" ? "active" : undefined}
-          onClick={() => setMode("register")}
-        >
-          Create account
-        </button>
+      <div className="tabs" role="tablist" aria-label="Account">
+        {(["login", "register"] as const).map((tab) => (
+          <button
+            key={tab}
+            ref={tabRef[tab]}
+            type="button"
+            role="tab"
+            id={`tab-${tab}`}
+            aria-selected={mode === tab}
+            aria-controls="auth-tabpanel"
+            tabIndex={mode === tab ? 0 : -1}
+            onClick={() => switchTo(tab)}
+            onKeyDown={(event) => {
+              if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+              const other = tab === "login" ? "register" : "login";
+              switchTo(other);
+              tabRef[other].current?.focus();
+            }}
+          >
+            {tab === "login" ? "Sign in" : "Create account"}
+          </button>
+        ))}
       </div>
 
-      <div className="auth-heading">
-        <span className="auth-icon">
-          {mode === "login" ? <LockKeyhole size={22} /> : <UserRound size={22} />}
-        </span>
-        <div>
-          <h1>{mode === "login" ? "Welcome back, rider." : "Make CycleLine yours."}</h1>
+      <div id="auth-tabpanel" role="tabpanel" aria-labelledby={`tab-${mode}`}>
+        <header className="auth-heading">
+          <h1>{mode === "login" ? "Welcome back" : "Create your account"}</h1>
           <p>
             {mode === "login"
-              ? "Sign in to plan, save, and revisit your routes."
-              : "Create a profile for your routes, fitness, and bikes."}
+              ? "Sign in to plan, save and ride your routes again."
+              : "Free, and it keeps your routes, bikes and fitness in one place."}
           </p>
-        </div>
-      </div>
+        </header>
 
-      {mode === "login" ? (
-        <form action={handleLogin} className="auth-form">
-          <label>
-            Username or email
-            <span className="input-wrap">
-              <Mail size={17} />
-              <input name="login" autoComplete="username" placeholder="Your username or email" required />
-            </span>
-          </label>
-          <label>
-            Password
-            <span className="input-wrap">
-              <LockKeyhole size={17} />
-              <input
-                name="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                placeholder="Your password"
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword((visible) => !visible)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+        {mode === "login" ? (
+          <form action={handleLogin} className="auth-form">
+            <Field
+              label="Username or email"
+              name="login"
+              icon={<Mail size={18} />}
+              autoComplete="username"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
+              inputMode="email"
+              enterKeyHint="next"
+              placeholder="you@example.com"
+              validate={validateLogin}
+              required
+            />
+            <PasswordField
+              label="Password"
+              name="password"
+              autoComplete="current-password"
+              enterKeyHint="go"
+              placeholder="Your password"
+              validate={(value) => (value ? null : "Enter your password.")}
+              required
+            />
+            {loginError && (
+              <p className="form-alert" role="alert">
+                <AlertCircle size={16} aria-hidden="true" />
+                {loginError}
+              </p>
+            )}
+            <button className="button button-primary button-full auth-submit" disabled={isLoggingIn} aria-busy={isLoggingIn}>
+              {isLoggingIn && <LoaderCircle className="spin" size={18} aria-hidden="true" />}
+              {isLoggingIn ? "Signing in…" : "Sign in"}
+            </button>
+            <div className="auth-help" aria-live="polite">
+              <button type="button" className="link-button" aria-expanded={showReset} onClick={() => setShowReset((open) => !open)}>
+                Forgot your password?
               </button>
-            </span>
-          </label>
-          <div className="auth-options">
-            <label className="check-label">
-              <input type="checkbox" name="remember" defaultChecked />
-              <span>Keep me signed in</span>
-            </label>
-            <button type="button" className="link-button" onClick={() => toast.info("Ask a CycleLine administrator to reset your password.")}>
-              Forgot password?
+              {showReset && <Note>Password resets go through a CycleLine administrator for now. Ask them to set a new one for you.</Note>}
+            </div>
+          </form>
+        ) : registered ? (
+          <div className="auth-success" role="status">
+            <CheckCircle2 size={28} aria-hidden="true" />
+            <h2>Your account is ready</h2>
+            <p>{registered}</p>
+            <button type="button" className="button button-primary button-full" onClick={() => switchTo("login")}>
+              Continue to sign in
             </button>
           </div>
-          {loginError && <p className="form-error">{loginError}</p>}
-          <button className="button button-acid button-full" disabled={isLoggingIn}>
-            {isLoggingIn && <LoaderCircle className="spin" size={17} />}
-            Sign in to CycleLine
-          </button>
-        </form>
-      ) : state.ok ? (
-        <div className="auth-success">
-          <CheckCircle2 size={32} />
-          <h2>Account ready.</h2>
-          <p>{state.message}</p>
-          <button type="button" className="button button-acid button-full" onClick={() => setMode("login")}>
-            Continue to sign in
-          </button>
+        ) : (
+          <form action={registerFormAction} className="auth-form">
+            <Field
+              label="Email"
+              name="email"
+              type="email"
+              icon={<Mail size={18} />}
+              autoComplete="email"
+              autoCapitalize="off"
+              spellCheck={false}
+              inputMode="email"
+              enterKeyHint="next"
+              placeholder="you@example.com"
+              validate={validateEmail}
+              error={fieldError("email")}
+              required
+            />
+            <Field
+              label="Username"
+              name="username"
+              icon={<UserRound size={18} />}
+              autoComplete="username"
+              autoCapitalize="off"
+              autoCorrect="off"
+              spellCheck={false}
+              enterKeyHint="next"
+              placeholder="yourname"
+              hint="Shown on your routes. Letters, numbers, - and _."
+              validate={validateUsername}
+              error={fieldError("username")}
+              required
+              minLength={3}
+              maxLength={40}
+            />
+            <PasswordField
+              label="Password"
+              name="password"
+              autoComplete="new-password"
+              enterKeyHint="next"
+              placeholder="6 or more characters"
+              hint="Longer is stronger; no symbols required."
+              showStrength
+              validate={validatePassword}
+              error={fieldError("password")}
+              onChange={(event) => setPassword(event.currentTarget.value)}
+              required
+              minLength={6}
+            />
+            <PasswordField
+              label="Repeat password"
+              name="password_confirmation"
+              autoComplete="new-password"
+              enterKeyHint="go"
+              placeholder="Same password again"
+              validate={(value) => (!value ? "Repeat your password." : value !== password ? "The two passwords don't match." : null)}
+              error={fieldError("password_confirmation")}
+              required
+              minLength={6}
+            />
+            <button className="button button-primary button-full auth-submit" disabled={isRegistering} aria-busy={isRegistering}>
+              {isRegistering && <LoaderCircle className="spin" size={18} aria-hidden="true" />}
+              {isRegistering ? "Creating your account…" : "Create account"}
+            </button>
+          </form>
+        )}
+
+        <div className="auth-divider" role="separator">
+          <span>or</span>
         </div>
-      ) : (
-        <form action={registerFormAction} className="auth-form">
-          <label>
-            Email
-            <span className="input-wrap">
-              <Mail size={17} />
-              <input name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
-            </span>
-            {fieldError("email") && <small className="form-error">{fieldError("email")}</small>}
-          </label>
-          <label>
-            Username
-            <span className="input-wrap">
-              <UserRound size={17} />
-              <input name="username" autoComplete="username" placeholder="yourname" required minLength={3} />
-            </span>
-            {fieldError("username") && <small className="form-error">{fieldError("username")}</small>}
-          </label>
-          <label>
-            Password
-            <span className="input-wrap">
-              <LockKeyhole size={17} />
-              <input
-                name="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                placeholder="6 or more characters"
-                required
-                minLength={6}
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={() => setShowPassword((visible) => !visible)}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-              </button>
-            </span>
-            <small className="field-hint">Use at least 6 characters. No symbol or number is required.</small>
-            {fieldError("password") && <small className="form-error">{fieldError("password")}</small>}
-          </label>
-          <label>
-            Repeat password
-            <span className="input-wrap">
-              <LockKeyhole size={17} />
-              <input
-                name="password_confirmation"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                placeholder="Repeat your password"
-                required
-                minLength={6}
-              />
-            </span>
-            {fieldError("password_confirmation") && (
-              <small className="form-error">{fieldError("password_confirmation")}</small>
-            )}
-          </label>
-          <button className="button button-acid button-full" disabled={isRegistering}>
-            {isRegistering && <LoaderCircle className="spin" size={17} />}
-            Create my account
+        <Link href="/demo" className="button button-secondary button-full">
+          <MapIcon size={18} aria-hidden="true" /> Try the planner without an account
+        </Link>
+        <p className="auth-switch">
+          {mode === "login" ? "New to CycleLine?" : "Already have an account?"}{" "}
+          <button type="button" className="link-button" onClick={() => switchTo(mode === "login" ? "register" : "login")}>
+            {mode === "login" ? "Create an account" : "Sign in"}
           </button>
-        </form>
-      )}
+        </p>
+      </div>
     </div>
   );
 }
