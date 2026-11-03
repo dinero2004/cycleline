@@ -45,7 +45,7 @@ Gates: `.agents/gates.md`. Work loop: `.agents/commands/process.md`.
 - Seeder holds demo credentials (`DatabaseSeeder.php`); `render.yaml:44` keeps `SEED_DATABASE=false`. Never enable in production.
 - `compose.yaml` contains dev-only secrets; never reuse in real environments.
 - BRouter/Nominatim are public endpoints hard-coded in `frontend/src/app/api/{route,geocode}/route.ts`.
-- No CI config exists in the repo (no `.github/workflows`).
+- CI: `.github/workflows/ci.yml` runs the backend and frontend gates plus both Docker builds on every PR and push to `main`.
 
 ## Git/PR rules
 - No branch-name or PR-title rule found in the repo. Commits in history use Conventional Commit prefixes (`feat:`, `fix:`, `chore:`) and PR-number suffix (`(#1)`).
